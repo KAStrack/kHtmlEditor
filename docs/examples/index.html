@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Examples — kHtmlEditor</title>
+  <meta name="description" content="Copy-and-paste kHtmlEditor examples: basic setup, custom toolbars, uploads, dialogs, plugins, forms and TinyMCE migration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <p class="tagline">Examples. Each page is self-contained: view the source and copy it.</p>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="example-grid">
+    <div class="feature"><h3><a href="basic.html">Basic editor</a></h3><p>A textarea, a few buttons, no menubar.</p></div>
+    <div class="feature"><h3><a href="full-toolbar.html">Full toolbar and menubar</a></h3><p>Every bundled plugin, sliding toolbar.</p></div>
+    <div class="feature"><h3><a href="custom-toolbar.html">Custom toolbar</a></h3><p>Toolbar rows, groups and a custom button.</p></div>
+    <div class="feature"><h3><a href="menubar-off.html">Minimal UI</a></h3><p>No menubar, status bar or branding; placeholder text.</p></div>
+    <div class="feature"><h3><a href="readonly.html">Read-only and disabled</a></h3><p>Switch modes at runtime.</p></div>
+    <div class="feature"><h3><a href="dark-skin.html">Dark skin</a></h3><p>oxide-dark UI and dark content CSS.</p></div>
+    <div class="feature"><h3><a href="image-upload.html">Image upload</a></h3><p>Paste, drop and dialog uploads with progress.</p></div>
+    <div class="feature"><h3><a href="video-upload.html">Video and audio upload</a></h3><p>Media dialog upload tab and embeds.</p></div>
+    <div class="feature"><h3><a href="source-view-inline.html">Inline source view</a></h3><p>code_view: 'inline'.</p></div>
+    <div class="feature"><h3><a href="custom-button-and-dialog.html">Custom button and dialog</a></h3><p>windowManager.open() with the TinyMCE dialog spec.</p></div>
+    <div class="feature"><h3><a href="custom-plugin.html">Custom plugin</a></h3><p>PluginManager.add() with options, commands and UI.</p></div>
+    <div class="feature"><h3><a href="form-integration.html">Form integration</a></h3><p>Textarea sync on submit, reset handling.</p></div>
+    <div class="feature"><h3><a href="tinymce-migration.html">TinyMCE migration</a></h3><p>An untouched tinymce.init() via the shim.</p></div>
+    <div class="feature"><h3><a href="multiple-editors.html">Multiple editors</a></h3><p>Class selectors and kHtmlEditor.get().</p></div>
+  </div>
+  <section class="section">
+    <h2>Server-side upload handlers</h2>
+    <p>The <a href="https://github.com/KAStrack/kHtmlEditor/tree/main/docs/examples/server">server</a> folder contains <code>upload.php</code> and <code>upload.mjs</code>: minimal, validating implementations of TinyMCE's upload contract (multipart <code>POST</code> with a <code>file</code> field, JSON <code>{"location": "..."}</code> response) that work for both images and media.</p>
+  </section>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu items — kHtmlEditor</title>
+  <meta name="description" content="Every menu item name usable in the menu and contextmenu options.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html" class="active">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="menu-items">Menu items</h1>
+<p class="lead">Use these names in `menu`, `removed_menuitems`, `contextmenu` and in `getSubmenuItems` strings. Generated from the source at build time.</p>
+<p>The default menubar is:</p>
+<pre><code class="language-js">menu: {
+  file:   { title: 'File',   items: 'newdocument restoredraft | preview | print' },
+  edit:   { title: 'Edit',   items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+  view:   { title: 'View',   items: 'code | visualaid visualchars visualblocks | preview fullscreen' },
+  insert: { title: 'Insert', items: 'image link media codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor | insertdatetime' },
+  format: { title: 'Format', items: 'bold italic underline strikethrough superscript subscript codeformat | styles blocks fontfamily fontsize align lineheight | forecolor backcolor | language | removeformat' },
+  tools:  { title: 'Tools',  items: 'code wordcount' },
+  table:  { title: 'Table',  items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
+  help:   { title: 'Help',   items: 'help' }
+}</code></pre>
+<p>Items whose plugin is not loaded are skipped silently, as in TinyMCE.</p>
+<table><thead><tr><th>Menu item</th><th>Kind</th><th>Provided by</th></tr></thead><tbody><tr><td><code>anchor</code></td><td>MenuItem</td><td>anchor plugin</td></tr><tr><td><code>restoredraft</code></td><td>MenuItem</td><td>autosave plugin</td></tr><tr><td><code>charmap</code></td><td>MenuItem</td><td>charmap plugin</td></tr><tr><td><code>code</code></td><td>MenuItem</td><td>code plugin</td></tr><tr><td><code>codesample</code></td><td>MenuItem</td><td>codesample plugin</td></tr><tr><td><code>align</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>blockquote</code></td><td>ToggleMenuItem</td><td>core (UI)</td></tr><tr><td><code>blocks</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>codeformat</code></td><td>ToggleMenuItem</td><td>core (UI)</td></tr><tr><td><code>fontfamily</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>fontsize</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>hr</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>indent</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>language</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>lineheight</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>newdocument</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>outdent</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>pastetext</code></td><td>ToggleMenuItem</td><td>core (UI)</td></tr><tr><td><code>print</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>redo</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>removeformat</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>selectall</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>styles</code></td><td>NestedMenuItem</td><td>core (UI)</td></tr><tr><td><code>undo</code></td><td>MenuItem</td><td>core (UI)</td></tr><tr><td><code>visualaid</code></td><td>ToggleMenuItem</td><td>core (UI)</td></tr><tr><td><code>ltr</code></td><td>ToggleMenuItem</td><td>directionality plugin</td></tr><tr><td><code>rtl</code></td><td>ToggleMenuItem</td><td>directionality plugin</td></tr><tr><td><code>emoticons</code></td><td>MenuItem</td><td>emoticons plugin</td></tr><tr><td><code>fullscreen</code></td><td>ToggleMenuItem</td><td>fullscreen plugin</td></tr><tr><td><code>help</code></td><td>MenuItem</td><td>help plugin</td></tr><tr><td><code>image</code></td><td>MenuItem</td><td>image plugin</td></tr><tr><td><code>insertdatetime</code></td><td>NestedMenuItem</td><td>insertdatetime plugin</td></tr><tr><td><code>link</code></td><td>MenuItem</td><td>link plugin</td></tr><tr><td><code>openlink</code></td><td>MenuItem</td><td>link plugin</td></tr><tr><td><code>unlink</code></td><td>MenuItem</td><td>link plugin</td></tr><tr><td><code>bullist</code></td><td>ToggleMenuItem</td><td>lists plugin</td></tr><tr><td><code>listprops</code></td><td>MenuItem</td><td>lists plugin</td></tr><tr><td><code>numlist</code></td><td>ToggleMenuItem</td><td>lists plugin</td></tr><tr><td><code>media</code></td><td>MenuItem</td><td>media plugin</td></tr><tr><td><code>nonbreaking</code></td><td>MenuItem</td><td>nonbreaking plugin</td></tr><tr><td><code>pagebreak</code></td><td>MenuItem</td><td>pagebreak plugin</td></tr><tr><td><code>preview</code></td><td>MenuItem</td><td>preview plugin</td></tr><tr><td><code>cancel</code></td><td>MenuItem</td><td>save plugin</td></tr><tr><td><code>save</code></td><td>MenuItem</td><td>save plugin</td></tr><tr><td><code>searchreplace</code></td><td>MenuItem</td><td>searchreplace plugin</td></tr><tr><td><code>cell</code></td><td>NestedMenuItem</td><td>table plugin</td></tr><tr><td><code>column</code></td><td>NestedMenuItem</td><td>table plugin</td></tr><tr><td><code>deletetable</code></td><td>MenuItem</td><td>table plugin</td></tr><tr><td><code>inserttable</code></td><td>NestedMenuItem</td><td>table plugin</td></tr><tr><td><code>inserttabledialog</code></td><td>MenuItem</td><td>table plugin</td></tr><tr><td><code>row</code></td><td>NestedMenuItem</td><td>table plugin</td></tr><tr><td><code>visualblocks</code></td><td>ToggleMenuItem</td><td>visualblocks plugin</td></tr><tr><td><code>visualchars</code></td><td>ToggleMenuItem</td><td>visualchars plugin</td></tr><tr><td><code>wordcount</code></td><td>MenuItem</td><td>wordcount plugin</td></tr></tbody></table>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

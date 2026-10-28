@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo — kHtmlEditor</title>
+  <meta name="description" content="Live kHtmlEditor demo: edit the init() configuration, re-initialise, and inspect the HTML output.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../dist/khtmleditor.min.js"></script>
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <p class="tagline">Full-featured demo. Edit the configuration on the right and press Apply.</p>
+  <div class="header-links">
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="demo-layout" style="margin-top:28px">
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" aria-hidden="true">🧪</div>
+          <div>
+            <div class="card-title">Editor</div>
+            <div class="card-desc">Every bundled plugin is loaded. Uploads use an in-browser fake handler so the demo works on GitHub Pages.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <textarea id="demo-editor">
+<h1>kHtmlEditor demo</h1>
+<p>This page exercises the <strong>complete</strong> plugin set: tables, images, media, lists, code samples, search and replace, emoji <em>and more</em>. Try the menubar, right-click for the context menu, or select text for the quick toolbar.</p>
+<table style="border-collapse: collapse; width: 100%;" border="1"><colgroup><col style="width: 33.3333%;"><col style="width: 33.3333%;"><col style="width: 33.3333%;"></colgroup>
+<thead>
+<tr><th scope="col">Feature</th><th scope="col">TinyMCE</th><th scope="col">kHtmlEditor</th></tr>
+</thead>
+<tbody>
+<tr><td>Configuration</td><td>init({...})</td><td>init({...}) — identical</td></tr>
+<tr><td>Dependencies</td><td>DOMPurify, Prism</td><td>none</td></tr>
+<tr><td>License</td><td>GPL / commercial</td><td>MIT</td></tr>
+</tbody>
+</table>
+<p>Type <code>:smile</code> for an emoji, <code>**bold**</code> for text patterns, or paste a YouTube link.</p>
+<pre class="language-javascript">kHtmlEditor.init({ selector: 'textarea' });</pre>
+          </textarea>
+          <div class="btn-row">
+            <button class="btn" id="btn-get">getContent()</button>
+            <button class="btn" id="btn-text">getContent({format: 'text'})</button>
+            <button class="btn" id="btn-reset">resetContent()</button>
+          </div>
+          <div class="section-label" style="margin-top:16px">Output</div>
+          <pre class="output" id="demo-output" aria-live="polite"></pre>
+        </div>
+      </div>
+    </div>
+    <aside class="card demo-config">
+      <div class="card-header">
+        <div class="card-icon" aria-hidden="true">⚙️</div>
+        <div>
+          <div class="card-title">Configuration</div>
+          <div class="card-desc">JSON passed to <code>kHtmlEditor.init()</code>. Functions are not expressible in JSON; see the examples for those.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="btn-row" style="margin:0 0 10px">
+          <button class="btn" data-preset="full">Full</button>
+          <button class="btn" data-preset="basic">Basic</button>
+          <button class="btn" data-preset="dark">Dark</button>
+          <button class="btn" data-preset="quickbars">Quickbars only</button>
+        </div>
+        <textarea id="demo-config" spellcheck="false" aria-label="Editor configuration (JSON)"></textarea>
+        <div class="error" id="demo-error"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-apply">Apply</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+<script>
+(function () {
+  var presets = {
+    full: {
+      selector: '#demo-editor',
+      height: 520,
+      plugins: 'advlist anchor autolink autosave charmap code codesample directionality emoticons fullscreen help image importcss insertdatetime link lists media nonbreaking pagebreak preview quickbars save searchreplace table visualblocks visualchars wordcount',
+      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table codesample | charmap emoticons insertdatetime | searchreplace visualblocks code fullscreen preview help',
+      toolbar_mode: 'sliding',
+      menubar: 'file edit view insert format tools table help',
+      image_caption: true,
+      image_advtab: true,
+      quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
+      quickbars_insert_toolbar: 'quickimage quicktable',
+      contextmenu: 'link image table',
+      link_list: [{ title: 'kHtmlEditor on GitHub', value: 'https://github.com/KAStrack/kHtmlEditor' }],
+      content_style: 'body { font-family: Inter, system-ui, sans-serif; font-size: 15px; }',
+      autosave_ask_before_unload: false
+    },
+    basic: {
+      selector: '#demo-editor',
+      height: 400,
+      menubar: false,
+      plugins: 'lists link',
+      toolbar: 'bold italic underline | bullist numlist | link | removeformat'
+    },
+    dark: {
+      selector: '#demo-editor',
+      height: 480,
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      plugins: 'lists link image table code fullscreen',
+      toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image table | code fullscreen'
+    },
+    quickbars: {
+      selector: '#demo-editor',
+      height: 420,
+      menubar: false,
+      toolbar: false,
+      plugins: 'quickbars link image table lists',
+      quickbars_selection_toolbar: 'bold italic underline | quicklink h2 h3 blockquote',
+      quickbars_insert_toolbar: 'quickimage quicktable',
+      statusbar: false
+    }
+  };
+  var configEl = document.getElementById('demo-config');
+  var errorEl = document.getElementById('demo-error');
+  var outputEl = document.getElementById('demo-output');
+  var content = document.getElementById('demo-editor').value;
+
+  // Fake upload handler so drag-drop / paste / the image dialog work without a server.
+  var fakeUpload = function (blobInfo) {
+    return new Promise(function (resolve) {
+      setTimeout(function () { resolve('data:' + blobInfo.blob().type + ';base64,' + blobInfo.base64()); }, 300);
+    });
+  };
+
+  function init(config) {
+    var existing = kHtmlEditor.get('demo-editor');
+    if (existing) { content = existing.getContent(); existing.remove(); document.getElementById('demo-editor').value = content; }
+    var cfg = Object.assign({}, config, { images_upload_handler: fakeUpload, media_upload_handler: fakeUpload });
+    return kHtmlEditor.init(cfg).then(function () {
+      var ed = kHtmlEditor.get('demo-editor');
+      var render = function () { outputEl.textContent = ed.getContent(); };
+      ed.on('change input undo redo SetContent ExecCommand', render);
+      render();
+    });
+  }
+  function load(name) {
+    configEl.value = JSON.stringify(presets[name], null, 2);
+    errorEl.textContent = '';
+    init(presets[name]);
+  }
+  document.getElementById('btn-apply').addEventListener('click', function () {
+    try {
+      var cfg = JSON.parse(configEl.value);
+      cfg.selector = '#demo-editor';
+      errorEl.textContent = '';
+      init(cfg);
+    } catch (e) { errorEl.textContent = 'Invalid JSON: ' + e.message; }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (b) {
+    b.addEventListener('click', function () { load(b.getAttribute('data-preset')); });
+  });
+  document.getElementById('btn-get').addEventListener('click', function () { outputEl.textContent = kHtmlEditor.get('demo-editor').getContent(); });
+  document.getElementById('btn-text').addEventListener('click', function () { outputEl.textContent = kHtmlEditor.get('demo-editor').getContent({ format: 'text' }); });
+  document.getElementById('btn-reset').addEventListener('click', function () { kHtmlEditor.get('demo-editor').resetContent(); });
+  load('full');
+})();
+</script>
+</body>
+</html>

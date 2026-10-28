@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sanitisation and output — kHtmlEditor</title>
+  <meta name="description" content="How content is cleaned on the way in, and how the HTML you get back is formatted.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html" class="active">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="sanitisation-and-output">Sanitisation and output</h1>
+<p>Every piece of HTML that enters the editor (<code>setContent</code>, <code>insertContent</code>, paste, drop, the source code dialog, <code>external_plugins</code> content) passes through two layers before it reaches the document.</p>
+<h2 id="1-the-schema">1. The schema</h2>
+<p>The schema decides which elements, attributes, styles and classes are allowed and how invalid nesting is repaired. It is configured exactly like TinyMCE:</p>
+<pre><code class="language-js">schema: 'html5',                       // 'html5' (default), 'html4', 'html5-strict'
+valid_elements: 'p,strong/b,em/i,a[href|target=_blank],ul,ol,li,img[src|alt|width|height]',
+extended_valid_elements: 'iframe[src|width|height|allowfullscreen],script[src]',
+invalid_elements: 'font,center',
+valid_children: '+body[style],-li[p]',
+valid_styles: { '*': 'color,font-size,text-align' },
+invalid_styles: { '*': 'position,z-index' },
+valid_classes: { '*': 'intro,callout', p: 'lead' },
+custom_elements: 'my-widget,~my-inline-thing'</code></pre>
+<p>The <code>valid_elements</code> grammar supports aliases (<code>strong/b</code>), required attributes (<code>!href</code>), default values (<code>target=_blank</code>), forced values (<code>rel:noopener</code>), value lists (<code>target&lt;_blank?_self</code>), wildcards (<code>*[*]</code>, <code>@[class]</code>) and the <code>+</code>/<code>-</code>/<code>#</code> prefixes. Elements not in the schema are removed and their text kept; invalid children are fixed by splitting the parent around them (TinyMCE behaviour); stray text at the root is wrapped in <code>forced_root_block</code> (<code>p</code>).</p>
+<h2 id="2-the-xss-layer">2. The XSS layer</h2>
+<p>The second layer cannot be turned off by schema settings. It removes <code>script</code>, <code>style</code> (unless explicitly allowed), <code>object</code>/<code>embed</code> (converted to <code>img</code>/<code>video</code>/<code>audio</code>/<code>iframe</code> when <code>convert_unsafe_embeds</code> is on), <code>template</code>, <code>meta</code>, <code>link</code>, <code>base</code>, <code>frameset</code> and friends; strips all <code>on*</code> event handler attributes (after decoding tricks such as <code>on&amp;#x63;lick</code>), <code>formaction</code>, <code>srcdoc</code>, <code>xmlns</code>, <code>is</code> and <code>nonce</code>; rejects <code>javascript:</code>, <code>vbscript:</code> and similar URLs in every URL attribute and inside <code>srcset</code>; allows <code>data:</code> URLs only for raster images (and <code>data:video/*</code>/<code>data:audio/*</code> on media elements awaiting upload); adds <code>rel=&quot;noopener&quot;</code> to <code>target=&quot;_blank&quot;</code> links; sandboxes <code>iframe</code> elements except for the hosts in <code>sandbox_iframes_exclusions</code>; drops <code>id</code>/<code>name</code> values that would clobber <code>document</code> or form properties; and filters CSS for <code>expression()</code>, <code>behavior</code>, <code>-moz-binding</code>, <code>@import</code> and unsafe <code>url()</code> values. Comments that contain markup are removed.</p>
+<p>The layer is regression tested against a corpus of published XSS vectors (<code>tests/xss/vectors.json</code>) and is idempotent: sanitising already sanitised content changes nothing.</p>
+<p>Options: <code>allow_script_urls</code>, <code>allow_html_data_urls</code>, <code>allow_svg_data_urls</code>, <code>allow_unsafe_link_target</code>, <code>allow_conditional_comments</code>, <code>allow_html_in_comments</code>, <code>convert_unsafe_embeds</code>, <code>sandbox_iframes</code>, <code>sandbox_iframes_exclusions</code>.</p>
+<h2 id="output-formatting">Output formatting</h2>
+<p><code>getContent()</code> serialises the document with TinyMCE's writer rules so existing round-trip expectations hold:</p>
+<ul>
+<li>block elements on their own lines (<code>indent</code>, <code>indent_before</code>, <code>indent_after</code>),
+</li>
+<li><code>entity_encoding: 'named'</code> by default (<code>&amp;nbsp;</code>, <code>&amp;euro;</code>, <code>&amp;copy;</code>), or <code>'numeric'</code>, <code>'raw'</code>, <code>'named+numeric'</code> with <code>entities</code>,
+</li>
+<li><code>element_format: 'html'</code> (or <code>'xhtml'</code>),
+</li>
+<li>empty blocks padded with <code>&amp;nbsp;</code>, trailing <code>&lt;br&gt;</code> removed (<code>remove_trailing_brs</code>),
+</li>
+<li>URLs converted according to <code>convert_urls</code>, <code>relative_urls</code>, <code>remove_script_host</code>, <code>document_base_url</code> and <code>urlconverter_callback</code>,
+</li>
+<li>internal markers (<code>data-mce-*</code>, bogus elements, resize handles, caret containers) never appear in the output.
+</li></ul>
+<pre><code class="language-js">editor.getContent();                     // formatted HTML
+editor.getContent({ format: 'text' });   // plain text
+editor.getContent({ format: 'raw' });    // the live DOM, unformatted
+editor.getContent({ format: 'tree' });   // a DOM fragment</code></pre>
+<h2 id="hooks">Hooks</h2>
+<ul>
+<li><code>BeforeSetContent</code> / <code>SetContent</code> / <code>BeforeGetContent</code> / <code>GetContent</code> events can inspect or rewrite <code>e.content</code>.
+</li>
+<li><code>editor.parser.addNodeFilter(names, fn)</code> and <code>addAttributeFilter(names, fn)</code> run on parsed DOM nodes when content enters; <code>editor.serializer.addNodeFilter</code> / <code>addAttributeFilter</code> run on a clone when content leaves.
+</li>
+<li><code>PastePreProcess</code> / <code>PastePostProcess</code> and the <code>paste_preprocess</code> / <code>paste_postprocess</code> options target pasted content specifically. See <a href="uploads.html">uploads and paste</a>.
+</li></ul>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dialogs and custom buttons — kHtmlEditor</title>
+  <meta name="description" content="Add toolbar buttons, menu items, context toolbars and dialogs from the setup callback.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html" class="active">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="dialogs-and-custom-buttons">Dialogs and custom buttons</h1>
+<p>Everything in this guide uses the same API as TinyMCE, so existing <code>setup</code> code runs unchanged.</p>
+<h2 id="buttons">Buttons</h2>
+<pre><code class="language-js">setup: (editor) =&gt; {
+  editor.ui.registry.addButton('shout', {
+    text: 'Shout',
+    icon: 'comment',
+    tooltip: 'Upper-case the selection',
+    onAction: () =&gt; editor.insertContent(editor.selection.getContent({ format: 'text' }).toUpperCase()),
+    onSetup: (api) =&gt; {
+      const update = () =&gt; api.setEnabled(!editor.selection.isCollapsed());
+      editor.on('NodeChange', update);
+      return () =&gt; editor.off('NodeChange', update);
+    }
+  });
+
+  editor.ui.registry.addToggleButton('highlight', {
+    icon: 'highlight-bg-color',
+    onAction: (api) =&gt; { editor.formatter.toggle('highlight'); api.setActive(!api.isActive()); },
+    onSetup: (api) =&gt; editor.formatter.formatChanged('highlight', (state) =&gt; api.setActive(state)).unbind
+  });
+
+  editor.ui.registry.addMenuButton('insertblock', {
+    text: 'Blocks',
+    fetch: (callback) =&gt; callback([
+      { type: 'menuitem', text: 'Note', onAction: () =&gt; editor.insertContent('&lt;div class=&quot;note&quot;&gt;Note&lt;/div&gt;') },
+      { type: 'nestedmenuitem', text: 'Alerts', getSubmenuItems: () =&gt; ['alert-info', 'alert-warn'] },
+      { type: 'separator' },
+      { type: 'togglemenuitem', text: 'Draft mode', active: false, onAction: () =&gt; {} }
+    ])
+  });
+
+  editor.ui.registry.addSplitButton('insertdate', {
+    icon: 'insert-time',
+    onAction: () =&gt; editor.insertContent(new Date().toLocaleDateString()),
+    onItemAction: (api, value) =&gt; editor.insertContent(value),
+    fetch: (callback) =&gt; callback([{ type: 'choiceitem', text: 'ISO', value: new Date().toISOString() }])
+  });
+}</code></pre>
+<p>Then reference the names in <code>toolbar: 'shout highlight insertblock insertdate'</code>. <code>addMenuItem</code>, <code>addNestedMenuItem</code> and <code>addToggleMenuItem</code> register menubar/context menu entries the same way; <code>addIcon(name, svg)</code> adds or overrides icons.</p>
+<p>Button and menu item specs accept <code>text</code>, <code>icon</code>, <code>tooltip</code>, <code>shortcut</code> (shown in tooltips/menus), <code>enabled</code>, <code>active</code>, <code>onAction</code>, <code>onSetup</code> (return a teardown function) and, for menu buttons, <code>fetch(callback)</code>.</p>
+<h2 id="context-toolbars-forms-and-menus">Context toolbars, forms and menus</h2>
+<pre><code class="language-js">editor.ui.registry.addContextToolbar('imagealign', {
+  predicate: (node) =&gt; node.nodeName === 'IMG',
+  items: 'alignleft aligncenter alignright',
+  position: 'node',          // 'node' | 'selection' | 'line'
+  scope: 'node'              // 'node' checks ancestors too, 'editor' only the selection node
+});
+
+editor.ui.registry.addContextForm('quickalt', {
+  launch: { type: 'contextformbutton', icon: 'image', tooltip: 'Alt text' },
+  predicate: (node) =&gt; node.nodeName === 'IMG',
+  initValue: () =&gt; editor.selection.getNode().getAttribute('alt') || '',
+  commands: [{ type: 'contextformbutton', text: 'Set', primary: true, onAction: (formApi) =&gt; { editor.selection.getNode().setAttribute('alt', formApi.getValue()); formApi.hide(); } }]
+});
+
+editor.ui.registry.addContextMenu('mymenu', {
+  update: (element) =&gt; element.nodeName === 'IMG' ? 'image | imagealign' : ''
+});</code></pre>
+<h2 id="dialogs">Dialogs</h2>
+<p><code>editor.windowManager.open(spec)</code> renders a modal from a declarative specification. The body is a <code>panel</code> of items or a <code>tabpanel</code> of tabs; <code>buttons</code> go in the footer; <code>initialData</code> populates fields by <code>name</code>.</p>
+<pre><code class="language-js">editor.windowManager.open({
+  title: 'Insert callout',
+  size: 'normal',                       // 'normal' | 'medium' | 'large'
+  body: {
+    type: 'panel',
+    items: [
+      { type: 'input', name: 'title', label: 'Title' },
+      { type: 'textarea', name: 'body', label: 'Text' },
+      { type: 'listbox', name: 'tone', label: 'Tone', items: [{ text: 'Info', value: 'info' }, { text: 'Warning', value: 'warning' }] },
+      { type: 'checkbox', name: 'closable', label: 'Closable' },
+      { type: 'urlinput', name: 'link', label: 'Link', filetype: 'file' },
+      { type: 'colorinput', name: 'color', label: 'Colour' },
+      { type: 'sizeinput', name: 'size', label: 'Size' },
+      { type: 'grid', columns: 2, items: [{ type: 'input', name: 'a' }, { type: 'input', name: 'b' }] },
+      { type: 'htmlpanel', html: '&lt;p&gt;Any &lt;strong&gt;HTML&lt;/strong&gt; (sanitised).&lt;/p&gt;' }
+    ]
+  },
+  buttons: [
+    { type: 'cancel', text: 'Cancel' },
+    { type: 'custom', name: 'preview', text: 'Preview' },
+    { type: 'submit', text: 'Insert', primary: true }
+  ],
+  initialData: { title: '', body: '', tone: 'info', closable: true, link: { value: '' }, color: '#2f6fed', size: { width: '', height: '' } },
+  onChange: (api, details) =&gt; { /* details.name changed; api.getData() */ },
+  onAction: (api, details) =&gt; { if (details.name === 'preview') { api.block('Rendering...'); setTimeout(api.unblock, 500); } },
+  onSubmit: (api) =&gt; {
+    const data = api.getData();
+    editor.insertContent(`&lt;div class=&quot;callout ${data.tone}&quot;&gt;${editor.dom.encode(data.title)}&lt;/div&gt;`);
+    api.close();
+  },
+  onClose: () =&gt; editor.focus()
+});</code></pre>
+<p>The dialog API offers <code>getData</code>, <code>setData</code>, <code>setEnabled(name, state)</code>, <code>focus(name)</code>, <code>showTab(name)</code>, <code>redial(spec)</code>, <code>block(message)</code>, <code>unblock</code>, <code>toggleFullscreen</code> and <code>close</code>. All component types, including <code>dropzone</code>, <code>iframe</code>, <code>imagepreview</code>, <code>collection</code>, <code>table</code>, <code>slider</code>, <code>alertbanner</code>, <code>bar</code> and <code>label</code>, are documented in the <a href="../reference/dialog-spec.html">dialog specification</a>.</p>
+<p><code>editor.windowManager.alert(message, callback)</code>, <code>confirm(message, callback)</code> and <code>openUrl({ title, url })</code> cover the simple cases.</p>
+<h2 id="notifications">Notifications</h2>
+<pre><code class="language-js">editor.notificationManager.open({ text: 'Saved', type: 'success', timeout: 2000 });
+const n = editor.notificationManager.open({ text: 'Uploading', type: 'info', progressBar: true });
+n.progressBar.value(50);
+n.close();</code></pre>
+<h2 id="commands-and-shortcuts">Commands and shortcuts</h2>
+<pre><code class="language-js">editor.addCommand('mceShout', (ui, value) =&gt; editor.insertContent(String(value).toUpperCase()));
+editor.execCommand('mceShout', false, 'hello');
+editor.addQueryStateHandler('mceShout', () =&gt; false);
+editor.addShortcut('meta+shift+s', 'Shout', () =&gt; editor.execCommand('mceShout', false, 'hi'));</code></pre>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

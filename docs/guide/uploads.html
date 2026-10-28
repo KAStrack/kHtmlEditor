@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Image and media uploads — kHtmlEditor</title>
+  <meta name="description" content="Connecting the editor to your upload endpoint, handling paste and drop, and uploading video.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html" class="active">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="image-and-media-uploads">Image and media uploads</h1>
+<h2 id="the-contract">The contract</h2>
+<p>When an image is pasted, dropped, picked in the image dialog's Upload tab or inserted as a <code>data:</code> URI, it is held in a blob cache and uploaded:</p>
+<ul>
+<li><code>POST</code> to <code>images_upload_url</code> as <code>multipart/form-data</code> with a single field named <code>file</code>.
+</li>
+<li>Cookies are sent when <code>images_upload_credentials: true</code>.
+</li>
+<li>The server answers <code>200</code> with JSON <code>{&quot;location&quot;: &quot;/uploads/abc.png&quot;}</code>.
+</li>
+<li>The <code>src</code> of the image is replaced with the location, prefixed by <code>images_upload_base_path</code> when the location is relative.
+</li>
+<li>Any other status, or a non-JSON body, is reported in a notification and the image keeps its local data.
+</li></ul>
+<p>This is TinyMCE's contract, so an existing server-side handler keeps working. Reference implementations in PHP and Node are in the repository under <code>docs/examples/server/</code>.</p>
+<pre><code class="language-js">kHtmlEditor.init({
+  selector: 'textarea',
+  plugins: 'image media',
+  images_upload_url: '/upload.php',
+  images_upload_base_path: '/',
+  images_upload_credentials: true,
+  automatic_uploads: true,            // default: upload as soon as the image appears
+  images_file_types: 'jpeg,jpg,png,gif,webp'
+});</code></pre>
+<h2 id="custom-upload-handler">Custom upload handler</h2>
+<p>Replace the XHR with your own code (for example to use <code>fetch</code>, signed URLs or a CDN). Return a promise that resolves with the URL; reject with a string or <code>{ message, remove: true }</code> to show an error and optionally remove the image.</p>
+<pre><code class="language-js">images_upload_handler: (blobInfo, progress) =&gt; fetch('/api/upload', {
+  method: 'POST',
+  body: blobInfo.blob(),
+  headers: { 'Content-Type': blobInfo.blob().type, 'X-Filename': blobInfo.filename() }
+}).then((r) =&gt; {
+  if (!r.ok) { throw { message: 'Upload failed: ' + r.status, remove: true }; }
+  return r.json().then((json) =&gt; json.url);
+})</code></pre>
+<p><code>blobInfo</code> exposes <code>id()</code>, <code>name()</code>, <code>filename()</code>, <code>blob()</code>, <code>base64()</code>, <code>blobUri()</code> and <code>uri()</code>.</p>
+<h2 id="manual-uploads">Manual uploads</h2>
+<p>With <code>automatic_uploads: false</code>, images stay as <code>data:</code> URIs in <code>getContent()</code> until you call:</p>
+<pre><code class="language-js">editor.uploadImages().then((results) =&gt; {
+  // results: [{ element, status, uploadUri, blobInfo, removed }]
+  form.submit();
+});</code></pre>
+<p>The undo history is rewritten with the uploaded URLs so undo never brings a blob URL back.</p>
+<h2 id="video-and-audio-extension">Video and audio (extension)</h2>
+<p>The media plugin's dialog gets an Upload tab when <code>media_upload_url</code> or <code>media_upload_handler</code> is set (it falls back to the image options). Dropped or pasted video and audio files become <code>&lt;video&gt;</code>/<code>&lt;audio&gt;</code> elements whose <code>&lt;source&gt;</code> is uploaded with the same contract.</p>
+<pre><code class="language-js">plugins: 'media',
+media_upload_url: '/upload.php',
+media_file_types: 'mp4,webm,mp3,ogg'</code></pre>
+<h2 id="the-image-dialog">The image dialog</h2>
+<p><code>image_caption</code> enables figure captions, <code>image_advtab</code> the style/spacing tab, <code>image_uploadtab</code> the upload tab, <code>image_list</code> a dropdown of predefined images, <code>image_class_list</code> a class dropdown, <code>image_title</code> and <code>image_description</code> the title and alt fields, <code>image_dimensions</code> the size fields. <code>file_picker_callback(callback, value, meta)</code> adds a browse button to URL fields (<code>meta.filetype</code> is <code>'image'</code>, <code>'media'</code> or <code>'file'</code>).</p>
+<p>Selected images can be resized by dragging the corner handles (<code>object_resizing</code>, <code>resize_img_proportional</code>). <code>ObjectResizeStart</code> can veto a resize and <code>ObjectResized</code> reports the new size.</p>
+<h2 id="paste-and-drop">Paste and drop</h2>
+<p>Pasted content is cleaned according to its source: Microsoft Word markup becomes real lists and semantic inline elements, Google Docs wrappers are removed and styled spans are converted to <code>strong</code>/<code>em</code>/<code>u</code>, and Chrome/Safari inline styles are removed unless <code>paste_webkit_styles</code> lists properties to keep (<code>paste_remove_styles_if_webkit</code>). Plain text becomes paragraphs with <code>&lt;br&gt;</code> for single newlines (<code>paste_tab_spaces</code> controls tabs). <code>smart_paste</code> turns a pasted URL into a link or image.</p>
+<ul>
+<li><code>paste_as_text: true</code> or the <code>pastetext</code> toolbar toggle (<code>mceTogglePlainTextPaste</code>) pastes plain text.
+</li>
+<li><code>paste_data_images: false</code> ignores pasted image files.
+</li>
+<li><code>paste_block_drop: true</code> ignores drops.
+</li>
+<li><code>paste_preprocess(editor, args)</code> runs on the HTML string (<code>args.content</code>); <code>paste_postprocess(editor, args)</code> on the parsed node (<code>args.node</code>). The <code>PastePreProcess</code> and <code>PastePostProcess</code> events expose the same data and can be cancelled.
+</li>
+<li>Copying inside the editor marks the clipboard as internal so formatting survives a paste back into the editor unchanged.
+</li></ul>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

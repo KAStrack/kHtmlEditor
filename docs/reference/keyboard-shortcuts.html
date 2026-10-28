@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keyboard shortcuts — kHtmlEditor</title>
+  <meta name="description" content="Editing and UI shortcuts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html" class="active">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="keyboard-shortcuts">Keyboard shortcuts</h1>
+<p>&lt;kbd&gt;Meta&lt;/kbd&gt; is &lt;kbd&gt;Ctrl&lt;/kbd&gt; on Windows and Linux and &lt;kbd&gt;⌘&lt;/kbd&gt; on macOS. &lt;kbd&gt;Access&lt;/kbd&gt; is &lt;kbd&gt;Shift+Alt&lt;/kbd&gt; on Windows and Linux and &lt;kbd&gt;⌃⌥&lt;/kbd&gt; on macOS.</p>
+<h2 id="editing">Editing</h2>
+<table><thead><tr><th>Shortcut</th><th>Action</th></tr></thead><tbody><tr><td>&lt;kbd&gt;Meta+B&lt;/kbd&gt; / &lt;kbd&gt;Meta+I&lt;/kbd&gt; / &lt;kbd&gt;Meta+U&lt;/kbd&gt;</td><td>Bold / Italic / Underline</td></tr><tr><td>&lt;kbd&gt;Meta+Z&lt;/kbd&gt; / &lt;kbd&gt;Meta+Y&lt;/kbd&gt; or &lt;kbd&gt;Meta+Shift+Z&lt;/kbd&gt;</td><td>Undo / Redo</td></tr><tr><td>&lt;kbd&gt;Meta+A&lt;/kbd&gt;</td><td>Select all</td></tr><tr><td>&lt;kbd&gt;Access+1&lt;/kbd&gt; … &lt;kbd&gt;Access+6&lt;/kbd&gt;</td><td>Heading 1 … 6</td></tr><tr><td>&lt;kbd&gt;Access+7&lt;/kbd&gt; / &lt;kbd&gt;Access+8&lt;/kbd&gt; / &lt;kbd&gt;Access+9&lt;/kbd&gt;</td><td>Paragraph / Div / Address</td></tr><tr><td>&lt;kbd&gt;Tab&lt;/kbd&gt; / &lt;kbd&gt;Shift+Tab&lt;/kbd&gt; in a list</td><td>Indent / outdent the item</td></tr><tr><td>&lt;kbd&gt;Tab&lt;/kbd&gt; / &lt;kbd&gt;Shift+Tab&lt;/kbd&gt; in a table</td><td>Next / previous cell (a new row at the end)</td></tr><tr><td>&lt;kbd&gt;Shift+Enter&lt;/kbd&gt;</td><td>Line break</td></tr><tr><td>&lt;kbd&gt;Enter&lt;/kbd&gt; on an empty list item</td><td>Leave the list</td></tr><tr><td>&lt;kbd&gt;Meta+Enter&lt;/kbd&gt; or &lt;kbd&gt;Meta+click&lt;/kbd&gt; on a link</td><td>Open the link</td></tr></tbody></table>
+<h2 id="plugins">Plugins</h2>
+<table><thead><tr><th>Shortcut</th><th>Action</th></tr></thead><tbody><tr><td>&lt;kbd&gt;Meta+K&lt;/kbd&gt;</td><td>Insert/edit link (link)</td></tr><tr><td>&lt;kbd&gt;Meta+F&lt;/kbd&gt;</td><td>Find and replace (searchreplace)</td></tr><tr><td>&lt;kbd&gt;Meta+S&lt;/kbd&gt;</td><td>Save (save)</td></tr><tr><td>&lt;kbd&gt;Meta+Shift+F&lt;/kbd&gt;</td><td>Fullscreen (fullscreen)</td></tr><tr><td>&lt;kbd&gt;Meta+Shift+C&lt;/kbd&gt;</td><td>Word count (wordcount)</td></tr><tr><td>&lt;kbd&gt;Alt+0&lt;/kbd&gt;</td><td>Help (help)</td></tr><tr><td><code>:</code> followed by a name</td><td>Emoji / special character autocompleter (emoticons, charmap)</td></tr></tbody></table>
+<h2 id="ui-navigation">UI navigation</h2>
+<table><thead><tr><th>Shortcut</th><th>Action</th></tr></thead><tbody><tr><td>&lt;kbd&gt;Alt+F9&lt;/kbd&gt;</td><td>Focus the menubar</td></tr><tr><td>&lt;kbd&gt;Alt+F10&lt;/kbd&gt;</td><td>Focus the toolbar</td></tr><tr><td>&lt;kbd&gt;Alt+F11&lt;/kbd&gt;</td><td>Focus the element path</td></tr><tr><td>&lt;kbd&gt;Alt+F12&lt;/kbd&gt; / &lt;kbd&gt;Esc&lt;/kbd&gt;</td><td>Back to the editor</td></tr><tr><td>&lt;kbd&gt;←&lt;/kbd&gt; &lt;kbd&gt;→&lt;/kbd&gt; &lt;kbd&gt;↑&lt;/kbd&gt; &lt;kbd&gt;↓&lt;/kbd&gt;</td><td>Move within toolbars and menus</td></tr><tr><td>&lt;kbd&gt;Enter&lt;/kbd&gt; / &lt;kbd&gt;Space&lt;/kbd&gt;</td><td>Activate</td></tr><tr><td>&lt;kbd&gt;Esc&lt;/kbd&gt;</td><td>Close menus, popups and dialogs</td></tr></tbody></table>
+<h2 id="custom-shortcuts">Custom shortcuts</h2>
+<pre><code class="language-js">editor.addShortcut('meta+shift+s', 'Shout', () =&gt; editor.execCommand('mceShout'));
+editor.addShortcut('access+m', 'Marker', 'mceToggleMarker');          // command name
+editor.addShortcut('meta+shift+1,meta+shift+2', 'Either', fn);      // alternatives</code></pre>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

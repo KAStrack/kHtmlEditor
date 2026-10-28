@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Global API — kHtmlEditor</title>
+  <meta name="description" content="The kHtmlEditor global (also available as tinymce / tinyMCE through the shim).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html" class="active">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="global-api">Global API</h1>
+<p>The script defines <code>window.kHtmlEditor</code>, an <code>EditorManager</code>. The ESM build exports it as the default export. With the shim it is also <code>window.tinymce</code> and <code>window.tinyMCE</code>.</p>
+<table><thead><tr><th>Member</th><th>Description</th></tr></thead><tbody><tr><td><code>init(options)</code></td><td>Creates editors for <code>options.selector</code> / <code>options.target</code>. Returns <code>Promise&lt;Editor[]&gt;</code>.</td></tr><tr><td><code>get(id?)</code></td><td>Editor by id (string) or index (number); all editors when omitted.</td></tr><tr><td><code>remove(selector?)</code></td><td>Removes editors by selector, instance or all.</td></tr><tr><td><code>activeEditor</code></td><td>The editor with focus (or the last one).</td></tr><tr><td><code>editors</code></td><td>Array of editors (also indexable by id).</td></tr><tr><td><code>triggerSave()</code></td><td>Writes every editor's content to its textarea.</td></tr><tr><td><code>execCommand(cmd, ui?, value?)</code></td><td>Runs a command on the active editor (also <code>mceAddEditor</code>, <code>mceRemoveEditor</code>, <code>mceFocus</code>).</td></tr><tr><td><code>createEditor(id, options)</code></td><td>Creates an editor without rendering it (<code>editor.render()</code>).</td></tr><tr><td><code>overrideDefaults(options)</code></td><td>Defaults merged into every subsequent <code>init()</code>.</td></tr><tr><td><code>addI18n(code, items)</code> / <code>translate(text)</code> / <code>i18n</code></td><td>Localisation.</td></tr><tr><td><code>on</code> / <code>off</code> / <code>once</code> / <code>dispatch</code></td><td>Manager events: <code>AddEditor</code>, <code>RemoveEditor</code>, <code>BeforeUnload</code>.</td></tr><tr><td><code>PluginManager.add(name, fn)</code> / <code>ThemeManager</code></td><td>Register plugins and themes.</td></tr><tr><td><code>DOM</code>, <code>dom.DOMUtils</code>, <code>Env</code>, <code>util.Tools</code>, <code>util.URI</code>, <code>util.I18n</code>, <code>ScriptLoader</code>, <code>Editor</code></td><td>Utility classes, as in TinyMCE.</td></tr><tr><td><code>each</code>, <code>map</code>, <code>grep</code>, <code>inArray</code>, <code>extend</code>, <code>walk</code>, <code>resolve</code>, <code>makeMap</code>, <code>toArray</code>, <code>trim</code>, <code>explode</code>, <code>is</code>, <code>isArray</code>, <code>hasOwn</code></td><td>Legacy <code>tinymce.*</code> helpers.</td></tr><tr><td><code>majorVersion</code>, <code>minorVersion</code></td><td><code>'7'</code>, <code>'0.0'</code>: the TinyMCE API level emulated.</td></tr><tr><td><code>version</code>, <code>releaseDate</code></td><td>The real kHtmlEditor version.</td></tr><tr><td><code>isKHtmlEditor</code></td><td><code>true</code>; lets code tell the two apart.</td></tr><tr><td><code>baseURL</code>, <code>documentBaseURL</code>, <code>suffix</code></td><td>Paths derived from the script location.</td></tr></tbody></table>
+<pre><code class="language-js">kHtmlEditor.init({ selector: 'textarea' }).then((editors) =&gt; {
+  editors[0].setContent('&lt;p&gt;Ready&lt;/p&gt;');
+});
+kHtmlEditor.on('AddEditor', (e) =&gt; console.log('created', e.editor.id));</code></pre>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Form integration — kHtmlEditor example</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../dist/khtmleditor.min.js"></script>
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <p class="tagline">Form integration</p>
+  <div class="header-links">
+    <a class="header-link" href="./">All examples</a>
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+  </div>
+</header>
+<div class="container container--narrow">
+  <section class="section">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" aria-hidden="true">📝</div>
+        <div>
+          <div class="card-title">Form integration</div>
+          <div class="card-desc">The textarea is kept in sync on submit so the editor works with plain HTML forms.</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <form id="demo-form" action="javascript:void(0)">
+          <label for="title" style="display:block;font-size:.85rem;margin-bottom:4px">Title</label>
+          <input id="title" name="title" value="My post" style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px">
+          <textarea id="editor" name="body"><p>Submit the form: the serialised HTML is read from the textarea, not from the editor.</p></textarea>
+          <div class="btn-row"><button class="btn btn-primary" type="submit">Submit form</button><button class="btn" type="reset">Reset</button></div>
+        </form>
+        <div class="section-label" style="margin-top:16px">Submitted form data</div>
+        <pre class="output" id="output" aria-live="polite"></pre>
+      </div>
+      <div class="card-footer">
+        <button class="view-source-btn" aria-expanded="false">
+          <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          View source
+        </button>
+        <div class="source-block"><pre><code id="source-view"></code></pre></div>
+      </div>
+    </div>
+  </section>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+<script id="example-script">
+var cfg = {
+  selector: '#editor',
+  height: 260,
+  menubar: false,
+  plugins: 'lists link',
+  toolbar: 'bold italic | bullist numlist | link',
+  // Defaults shown for clarity:
+  add_form_submit_trigger: true,
+  submit_patch: true
+};
+kHtmlEditor.init(cfg);
+document.getElementById('demo-form').addEventListener('submit', function () {
+  var data = new FormData(this);
+  var lines = [];
+  data.forEach(function (v, k) { lines.push(k + ' = ' + v); });
+  document.getElementById('output').textContent = lines.join('\n');
+});
+</script>
+<script>
+  // Show this page's own init script as the "source".
+  (function () {
+    var s = document.getElementById('example-script');
+    var v = document.getElementById('source-view');
+    if (s && v) { v.textContent = s.textContent.replace(/^\n+|\n+$/g, ''); }
+  })();
+</script>
+</body>
+</html>

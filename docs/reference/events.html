@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Events — kHtmlEditor</title>
+  <meta name="description" content="Editor and manager events with their payloads.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html" class="active">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="events">Events</h1>
+<p>Subscribe with <code>editor.on(name, handler)</code>; several names can be space separated. Handlers receive an event object with <code>type</code>, <code>target</code>, <code>preventDefault()</code>, <code>isDefaultPrevented()</code>, <code>stopPropagation()</code>, <code>stopImmediatePropagation()</code> and the payload fields listed. Event names are case-insensitive.</p>
+<h2 id="native-events-forwarded-from-the-content-document">Native events (forwarded from the content document)</h2>
+<p><code>click</code>, <code>dblclick</code>, <code>mousedown</code>, <code>mouseup</code>, <code>mousemove</code>, <code>mouseover</code>, <code>mouseout</code>, <code>mouseenter</code>, <code>mouseleave</code>, <code>contextmenu</code>, <code>keydown</code>, <code>keypress</code>, <code>keyup</code>, <code>input</code>, <code>beforeinput</code>, <code>compositionstart</code>, <code>compositionupdate</code>, <code>compositionend</code>, <code>focus</code>, <code>blur</code>, <code>focusin</code>, <code>focusout</code>, <code>copy</code>, <code>cut</code>, <code>paste</code>, <code>beforepaste</code>, <code>dragstart</code>, <code>dragend</code>, <code>dragover</code>, <code>drop</code>, <code>drag</code>, <code>wheel</code>, <code>touchstart</code>, <code>touchmove</code>, <code>touchend</code>, <code>touchcancel</code>, <code>selectionchange</code>, <code>submit</code>, <code>reset</code>.</p>
+<h2 id="lifecycle">Lifecycle</h2>
+<table><thead><tr><th>Event</th><th>Payload / notes</th></tr></thead><tbody><tr><td><code>ScriptsLoaded</code></td><td>External plugins and language loaded.</td></tr><tr><td><code>BeforeRenderUI</code>, <code>PostRender</code>, <code>SkinLoaded</code></td><td>UI rendering.</td></tr><tr><td><code>PreInit</code></td><td>Parser, serializer, formatter, selection ready. Register filters here.</td></tr><tr><td><code>LoadContent</code>, <code>init</code></td><td>Content loaded; editor usable.</td></tr><tr><td><code>activate</code> / <code>deactivate</code></td><td>Active editor changed (<code>e.relatedTarget</code>).</td></tr><tr><td><code>show</code> / <code>hide</code></td><td><code>editor.show()</code> / <code>hide()</code>.</td></tr><tr><td><code>SwitchMode</code></td><td><code>{ mode }</code></td></tr><tr><td><code>remove</code>, <code>detach</code></td><td>Teardown.</td></tr><tr><td><code>ResizeEditor</code></td><td>UI size changed (<code>{ height, delta }</code> from autoresize).</td></tr><tr><td><code>ProgressState</code></td><td><code>{ state, time }</code></td></tr></tbody></table>
+<h2 id="content">Content</h2>
+<table><thead><tr><th>Event</th><th>Payload / notes</th></tr></thead><tbody><tr><td><code>BeforeSetContent</code> / <code>SetContent</code></td><td><code>{ content, format, set, selection, paste, source_view }</code>; <code>content</code> can be rewritten before.</td></tr><tr><td><code>BeforeGetContent</code> / <code>GetContent</code></td><td><code>{ content, format, get, selection }</code>; <code>content</code> can be rewritten after.</td></tr><tr><td><code>PreProcess</code> / <code>PostProcess</code></td><td>Serializer hooks with <code>{ node }</code> / <code>{ content }</code>.</td></tr><tr><td><code>SaveContent</code>, <code>RawSaveContent</code>, <code>LoadContent</code></td><td><code>save()</code> / <code>load()</code>.</td></tr><tr><td><code>change</code></td><td>A new undo level was added (content changed).</td></tr><tr><td><code>dirty</code></td><td>The editor became dirty.</td></tr><tr><td><code>input</code></td><td>Native input.</td></tr><tr><td><code>NodeChange</code></td><td><code>{ element, parents, selectionChange, initial }</code></td></tr><tr><td><code>SelectionChange</code></td><td>Selection moved.</td></tr><tr><td><code>ExecCommand</code> / <code>BeforeExecCommand</code></td><td><code>{ command, ui, value }</code>; the latter is cancelable.</td></tr><tr><td><code>FormatApply</code> / <code>FormatRemove</code></td><td><code>{ format, node, vars }</code></td></tr><tr><td><code>NewBlock</code></td><td><code>{ newBlock }</code> after Enter.</td></tr><tr><td><code>ObjectSelected</code> / <code>BeforeObjectSelected</code></td><td>Fake selection of an image or non-editable block.</td></tr><tr><td><code>ObjectResizeStart</code> (cancelable) / <code>ObjectResized</code></td><td><code>{ target, width, height, origin }</code></td></tr><tr><td><code>ShowCaret</code>, <code>SetSelectionRange</code>, <code>AfterSetSelectionRange</code>, <code>ScrollIntoView</code>, <code>AfterScrollIntoView</code></td><td>Selection internals.</td></tr><tr><td><code>SetAttrib</code></td><td><code>{ attrElm, attrName, attrValue }</code> from <code>dom.setAttrib</code>.</td></tr><tr><td><code>ResolveName</code></td><td><code>{ name, target }</code> for the status bar path.</td></tr></tbody></table>
+<h2 id="undo">Undo</h2>
+<p><code>BeforeAddUndo</code> (cancelable, <code>{ level, lastLevel, originalEvent }</code>), <code>AddUndo</code>, <code>Undo</code>, <code>Redo</code>, <code>TypingUndo</code>, <code>ClearUndos</code>.</p>
+<h2 id="paste-and-uploads">Paste and uploads</h2>
+<p><code>PastePreProcess</code> (<code>{ content, internal, wordContent }</code>, cancelable), <code>PastePostProcess</code> (<code>{ node, internal }</code>, cancelable), <code>PastePlainTextToggle</code> (<code>{ state }</code>), <code>UploadImages</code> (<code>{ results }</code>).</p>
+<h2 id="ui">UI</h2>
+<p><code>OpenWindow</code> / <code>CloseWindow</code> (<code>{ dialog }</code>), <code>BeforeOpenNotification</code> / <code>OpenNotification</code> (<code>{ notification }</code>), <code>ToolbarOverflowToggle</code>, <code>StyleFormatsChanged</code>, <code>ContextFormLaunch</code>, <code>VisualAid</code>.</p>
+<h2 id="plugins">Plugins</h2>
+<table><thead><tr><th>Event</th><th>Plugin</th></tr></thead><tbody><tr><td><code>TableModified</code> (<code>{ table, structure, style }</code>), <code>NewRow</code>, <code>NewCell</code>, <code>TableSelectionChange</code>, <code>TableSelectionClear</code></td><td>table</td></tr><tr><td><code>ImageResized</code></td><td>image</td></tr><tr><td><code>FullscreenStateChanged</code> (<code>{ state }</code>)</td><td>fullscreen</td></tr><tr><td><code>VisualBlocks</code>, <code>VisualChars</code> (<code>{ state }</code>)</td><td>visualblocks, visualchars</td></tr><tr><td><code>WordCountUpdate</code> (<code>{ wordCount: { words, characters, charactersWithoutSpaces } }</code>)</td><td>wordcount</td></tr><tr><td><code>StoreDraft</code>, <code>RestoreDraft</code>, <code>RemoveDraft</code></td><td>autosave</td></tr><tr><td><code>SourceViewChange</code> (<code>{ state }</code>)</td><td>code (inline view)</td></tr><tr><td><code>insertCustomChar</code> (<code>{ chr }</code>)</td><td>charmap</td></tr><tr><td><code>AutocompleterStart</code> / <code>AutocompleterUpdate</code> / <code>AutocompleterEnd</code></td><td>autocompleter</td></tr></tbody></table>
+<h2 id="manager-events">Manager events</h2>
+<p><code>kHtmlEditor.on('AddEditor' | 'RemoveEditor' | 'BeforeUnload', fn)</code>.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

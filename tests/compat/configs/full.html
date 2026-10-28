@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Compat: full TinyMCE config with custom plugin, button and dialog</title>
+  <script src="/dist/khtmleditor.js"></script>
+  <script src="/dist/khtmleditor.tinymce-shim.js"></script>
+</head>
+<body>
+  <form id="f"><textarea id="article" name="article"><h2>Title</h2><p>Body text with a <a href="https://example.com/">link</a>.</p></textarea></form>
+  <script>
+    // A site-specific plugin written against the TinyMCE 6 API.
+    tinymce.PluginManager.add('sitetags', function (editor) {
+      editor.options.register('sitetags_list', { processor: 'string[]', default: [] });
+      editor.addCommand('mceInsertSiteTag', function (ui, value) {
+        editor.insertContent('<span class="tag">' + editor.dom.encode(value) + '</span>');
+      });
+      editor.ui.registry.addMenuButton('sitetags', {
+        text: 'Tags',
+        fetch: function (callback) {
+          callback(editor.options.get('sitetags_list').map(function (t) {
+            return { type: 'menuitem', text: t, onAction: function () { editor.execCommand('mceInsertSiteTag', false, t); } };
+          }));
+        }
+      });
+      editor.ui.registry.addButton('promo', {
+        text: 'Promo',
+        onAction: function () {
+          editor.windowManager.open({
+            title: 'Insert promo',
+            body: {
+              type: 'tabpanel',
+              tabs: [
+                { name: 'general', title: 'General', items: [
+                  { type: 'input', name: 'headline', label: 'Headline' },
+                  { type: 'urlinput', name: 'url', label: 'URL', filetype: 'file' },
+                  { type: 'selectbox', name: 'size', label: 'Size', items: [{ text: 'Small', value: 's' }, { text: 'Large', value: 'l' }] },
+                  { type: 'checkbox', name: 'newtab', label: 'Open in new tab' }
+                ] },
+                { name: 'advanced', title: 'Advanced', items: [
+                  { type: 'colorinput', name: 'color', label: 'Colour' },
+                  { type: 'textarea', name: 'notes', label: 'Notes' }
+                ] }
+              ]
+            },
+            buttons: [{ type: 'cancel', text: 'Cancel' }, { type: 'submit', text: 'Insert', primary: true }],
+            initialData: { headline: 'Buy now', url: { value: 'https://shop.example/' }, size: 'l', newtab: true, color: '#ff0000', notes: '' },
+            onSubmit: function (api) {
+              var d = api.getData();
+              editor.insertContent('<a class="promo promo-' + d.size + '" href="' + d.url.value + '"' + (d.newtab ? ' target="_blank"' : '') + ' style="color: ' + d.color + ';">' + editor.dom.encode(d.headline) + '</a>');
+              api.close();
+            }
+          });
+        }
+      });
+      editor.on('init', function () { window.__pluginInit = true; });
+      return { getMetadata: function () { return { name: 'Site tags', url: 'https://example.com' }; } };
+    });
+
+    tinymce.init({
+      selector: 'textarea#article',
+      height: 500,
+      menubar: 'file edit view insert format tools table help',
+      plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons sitetags',
+      toolbar: 'undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen preview save print | insertfile image media link anchor codesample | ltr rtl | sitetags promo',
+      toolbar_sticky: true,
+      autosave_ask_before_unload: false,
+      autosave_interval: '30s',
+      autosave_prefix: '{path}{query}-{id}-',
+      autosave_restore_when_empty: false,
+      autosave_retention: '2m',
+      image_advtab: true,
+      link_list: [{ title: 'My page 1', value: 'https://www.tiny.cloud' }],
+      image_list: [{ title: 'My page 1', value: 'https://www.tiny.cloud' }],
+      image_class_list: [{ title: 'None', value: '' }, { title: 'Some class', value: 'class-name' }],
+      importcss_append: true,
+      file_picker_callback: function (callback, value, meta) {
+        if (meta.filetype === 'file') { callback('https://www.google.com/logos/google.jpg', { text: 'My text' }); }
+        if (meta.filetype === 'image') { callback('https://www.google.com/logos/google.jpg', { alt: 'My alt text' }); }
+        if (meta.filetype === 'media') { callback('movie.mp4', { source2: 'alt.ogg', poster: 'https://www.google.com/logos/google.jpg' }); }
+      },
+      height: 600,
+      image_caption: true,
+      quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+      noneditable_class: 'mceNonEditable',
+      toolbar_mode: 'sliding',
+      contextmenu: 'link image table',
+      skin: 'oxide',
+      content_css: 'default',
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+      sitetags_list: ['news', 'sport'],
+      setup: function (editor) {
+        editor.ui.registry.addButton('customdate', { text: 'Date', onAction: function () { editor.insertContent('2026-01-01'); } });
+        editor.on('change', function () { window.__changed = (window.__changed || 0) + 1; });
+      }
+    }).then(function (editors) { window.__editors = editors; });
+  </script>
+</body>
+</html>

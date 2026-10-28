@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formats — kHtmlEditor</title>
+  <meta name="description" content="The format model behind bold, blocks, alignment, custom styles and the Formats menu.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html" class="active">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="formats">Formats</h1>
+<p>A <em>format</em> describes how a style is represented in the document. The formatter applies, removes, toggles and matches formats by name; toolbar buttons, menu items, text patterns and the <code>formats</code> / <code>style_formats</code> options all speak this language. The model is TinyMCE's.</p>
+<h2 id="format-kinds">Format kinds</h2>
+<pre><code class="language-js">{ inline: 'strong' }                                            // wrap text in an inline element
+{ inline: 'span', styles: { color: '%value' } }                 // with a variable
+{ block: 'h1' }                                                 // rename the block
+{ block: 'blockquote', wrapper: true }                          // wrap blocks
+{ selector: 'img', styles: { float: 'left' }, collapsed: false } // style matching elements
+{ selector: 'p,h1,h2,td', styles: { textAlign: 'center' } }</code></pre>
+<p>Common properties: <code>styles</code>, <code>attributes</code>, <code>classes</code> (space separated), <code>exact</code>, <code>remove: 'all' | 'none' | 'empty'</code>, <code>split</code>, <code>deep</code>, <code>expand</code>, <code>block_expand</code>, <code>wrapper</code>, <code>preview</code> (<code>false</code> or a list of CSS properties shown in menus), <code>onmatch</code>, <code>onformat</code>, <code>clear_child_styles</code>, <code>merge_siblings</code>, <code>merge_with_parents</code>, <code>ceFalseOverride</code>, <code>defaultBlock</code>. A format name can map to an array of variants; the first applicable one is used.</p>
+<h2 id="built-in-formats">Built-in formats</h2>
+<p><code>bold</code>, <code>italic</code>, <code>underline</code>, <code>strikethrough</code>, <code>superscript</code>, <code>subscript</code>, <code>code</code>, <code>link</code>, <code>removeformat</code>, <code>forecolor</code>, <code>hilitecolor</code>, <code>fontname</code>, <code>fontsize</code>, <code>lineheight</code>, <code>lang</code>, <code>alignleft</code>, <code>aligncenter</code>, <code>alignright</code>, <code>alignjustify</code>, <code>p</code>, <code>h1</code>–<code>h6</code>, <code>div</code>, <code>address</code>, <code>pre</code>, <code>blockquote</code>, <code>valigntop</code>, <code>valignmiddle</code>, <code>valignbottom</code>, and the list formats used by the lists plugin.</p>
+<h2 id="custom-formats">Custom formats</h2>
+<pre><code class="language-js">formats: {
+  highlight: { inline: 'mark', classes: 'highlight' },
+  callout: { block: 'div', classes: 'callout', wrapper: true },
+  smallcaps: { inline: 'span', styles: { fontVariant: 'small-caps' } }
+},
+style_formats: [
+  { title: 'Highlight', format: 'highlight' },
+  { title: 'Callout', format: 'callout' },
+  { title: 'Inline', items: [
+    { title: 'Small caps', format: 'smallcaps' },
+    { title: 'Red text', inline: 'span', styles: { color: '#c00' } }   // inline definitions work too
+  ] }
+],
+style_formats_merge: true,      // append to the default list instead of replacing it
+style_formats_autohide: false   // hide formats that cannot be applied at the caret</code></pre>
+<p>Related options: <code>block_formats</code> (<code>'Paragraph=p; Heading 1=h1; …'</code>), <code>font_family_formats</code>, <code>font_size_formats</code>, <code>line_height_formats</code>, <code>color_map</code>, <code>preview_styles</code>, <code>keep_styles</code>, <code>inline_boundaries</code>, <code>inline_boundaries_selector</code>.</p>
+<h2 id="api">API</h2>
+<pre><code class="language-js">editor.formatter.register('highlight', { inline: 'mark' });
+editor.formatter.apply('highlight');
+editor.formatter.apply('forecolor', { value: '#c00' });
+editor.formatter.remove('highlight');
+editor.formatter.toggle('bold');
+editor.formatter.match('bold');                 // true/false at the selection
+editor.formatter.matchAll(['bold', 'italic']);  // ['bold']
+editor.formatter.canApply('h1');
+editor.formatter.formatChanged('bold', (state, data) =&gt; button.setActive(state)); // returns { unbind }
+editor.formatter.getCssText('h1');              // preview CSS for menus</code></pre>
+<h2 id="text-patterns">Text patterns</h2>
+<p>Markdown-style patterns convert while typing (<code>text_patterns</code>): <code>*text*</code>, <code>**text**</code>, `<code> </code>code<code> </code><code> inline; </code>#<code>–</code>######<code>, </code>*<code>/</code>-<code>, </code>1.<code>, </code>---<code> at the start of a line. </code>text_patterns_lookup` adds dynamic patterns.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

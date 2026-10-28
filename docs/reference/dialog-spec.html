@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dialog specification — kHtmlEditor</title>
+  <meta name="description" content="The declarative dialog format accepted by windowManager.open().">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html" class="active">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="dialog-specification">Dialog specification</h1>
+<pre><code class="language-js">editor.windowManager.open({
+  title: string,
+  size: 'normal' | 'medium' | 'large',
+  body: Panel | TabPanel,
+  buttons: Button[],
+  initialData: Record&lt;string, any&gt;,
+  onSubmit, onCancel, onClose, onChange, onAction, onTabChange
+}, { inline: 'toolbar' | 'cursor' });   // optional: render as a popup instead of a modal</code></pre>
+<h2 id="body">Body</h2>
+<ul>
+<li><code>{ type: 'panel', items: Item[], classes?: string[] }</code>
+</li>
+<li><code>{ type: 'tabpanel', tabs: [{ name, title, items: Item[] }] }</code>
+</li></ul>
+<h2 id="items">Items</h2>
+<table><thead><tr><th>Type</th><th>Properties</th><th>Value in <code>getData()</code></th></tr></thead><tbody><tr><td><code>input</code></td><td><code>name</code>, <code>label</code>, <code>placeholder</code>, <code>inputMode</code>, <code>maximized</code>, <code>enabled</code></td><td>string</td></tr><tr><td><code>textarea</code></td><td><code>name</code>, <code>label</code>, <code>placeholder</code>, <code>maximized</code>, <code>spellcheck</code></td><td>string</td></tr><tr><td><code>selectbox</code> / <code>listbox</code></td><td><code>name</code>, <code>label</code>, <code>items: [{ text, value }]</code> (listbox items may nest <code>{ text, items }</code>), <code>size</code></td><td>string</td></tr><tr><td><code>checkbox</code></td><td><code>name</code>, <code>label</code>, <code>enabled</code></td><td>boolean</td></tr><tr><td><code>urlinput</code></td><td><code>name</code>, <code>label</code>, <code>filetype: 'image' | 'media' | 'file'</code> (enables <code>file_picker_callback</code>), <code>picker_text</code></td><td><code>{ value, meta }</code></td></tr><tr><td><code>sizeinput</code></td><td><code>name</code>, <code>label</code>, <code>constrain</code></td><td><code>{ width, height }</code></td></tr><tr><td><code>colorinput</code></td><td><code>name</code>, <code>label</code>, <code>storageKey</code></td><td>hex string</td></tr><tr><td><code>colorpicker</code></td><td><code>name</code>, <code>label</code></td><td>hex string</td></tr><tr><td><code>dropzone</code></td><td><code>name</code>, <code>label</code>, <code>accept</code>, <code>multiple</code></td><td><code>File[]</code></td></tr><tr><td><code>iframe</code></td><td><code>name</code>, <code>label</code>, <code>sandboxed</code>, <code>transparent</code>, <code>border</code>, <code>streamContent</code></td><td>HTML string (<code>srcdoc</code>)</td></tr><tr><td><code>imagepreview</code></td><td><code>name</code>, <code>height</code></td><td><code>{ url, zoom, cachedWidth, cachedHeight }</code></td></tr><tr><td><code>htmlpanel</code></td><td><code>html</code>, <code>presets: 'presentation' | 'document'</code></td><td>—</td></tr><tr><td><code>button</code></td><td><code>name</code>, <code>text</code>, <code>icon</code>, <code>primary</code>, <code>borderless</code>, <code>buttonType</code>, <code>enabled</code>, <code>active</code></td><td>— (fires <code>onAction</code>)</td></tr><tr><td><code>collection</code></td><td><code>name</code>, <code>columns: number | 'auto'</code>, <code>label</code></td><td>items <code>[{ value, text, icon }]</code>; clicks fire <code>onAction</code> with <code>details.value</code></td></tr><tr><td><code>table</code></td><td><code>header: string[]</code>, <code>cells: string[][]</code></td><td>—</td></tr><tr><td><code>slider</code></td><td><code>name</code>, <code>label</code>, <code>min</code>, <code>max</code></td><td>number</td></tr><tr><td><code>alertbanner</code></td><td><code>level: 'info' | 'warn' | 'error' | 'success'</code>, <code>text</code>, <code>icon</code>, <code>url</code></td><td>—</td></tr><tr><td><code>grid</code></td><td><code>columns</code>, <code>items</code></td><td>—</td></tr><tr><td><code>bar</code></td><td><code>items</code> (laid out in a row)</td><td>—</td></tr><tr><td><code>label</code></td><td><code>label</code>, <code>items</code>, <code>align</code>, <code>for</code></td><td>—</td></tr><tr><td><code>customeditor</code></td><td><code>name</code>, <code>tag</code>, <code>init(el) =&gt; api</code></td><td>string via <code>api.getValue()</code></td></tr><tr><td><code>tree</code></td><td><code>items</code>, <code>onLeafAction</code></td><td>—</td></tr></tbody></table>
+<h2 id="footer-buttons">Footer buttons</h2>
+<p><code>{ type: 'submit' | 'cancel' | 'custom' | 'menu' | 'togglebutton', name, text, icon, primary, align: 'start' | 'end', enabled, buttonType: 'primary' | 'secondary' | 'toolbar' }</code>. A <code>menu</code> button takes <code>items</code> (menu item specs); <code>submit</code> triggers <code>onSubmit</code>, <code>cancel</code> triggers <code>onCancel</code> and closes, <code>custom</code> triggers <code>onAction(api, { name })</code>.</p>
+<h2 id="callbacks">Callbacks</h2>
+<table><thead><tr><th>Callback</th><th>Arguments</th></tr></thead><tbody><tr><td><code>onSubmit(api)</code></td><td>Submit button or Enter in a single-line field. Call <code>api.close()</code> yourself.</td></tr><tr><td><code>onCancel(api)</code></td><td>Cancel button, Escape or the close icon (before closing).</td></tr><tr><td><code>onClose()</code></td><td>After the dialog closed.</td></tr><tr><td><code>onChange(api, { name })</code></td><td>A field changed.</td></tr><tr><td><code>onAction(api, { name, value })</code></td><td>A <code>custom</code> button, body button or collection item.</td></tr><tr><td><code>onTabChange(api, { newTabName, oldTabName })</code></td><td>Tab switched.</td></tr></tbody></table>
+<h2 id="dialog-instance-api">Dialog instance API</h2>
+<p><code>getData()</code>, <code>setData(partial)</code>, <code>setEnabled(name, state)</code>, <code>focus(name)</code>, <code>showTab(name)</code>, <code>redial(spec)</code>, <code>block(message)</code>, <code>unblock()</code>, <code>toggleFullscreen()</code>, <code>close()</code>.</p>
+<h2 id="url-dialogs">URL dialogs</h2>
+<p><code>editor.windowManager.openUrl({ title, url, width, height, buttons, onAction, onMessage, onCancel, onClose })</code> loads a page in an iframe; the page can call <code>window.parent.postMessage({ mceAction: 'insertContent', content })</code> with actions <code>insertContent</code>, <code>setContent</code>, <code>execCommand</code>, <code>close</code>, <code>block</code>, <code>unblock</code>.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

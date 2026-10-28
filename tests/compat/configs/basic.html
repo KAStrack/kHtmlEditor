@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Compat: basic TinyMCE 6 config</title>
+  <script src="/dist/khtmleditor.js"></script>
+  <script src="/dist/khtmleditor.tinymce-shim.js"></script>
+</head>
+<body>
+  <textarea id="content"><p>Welcome to <strong>TinyMCE</strong>!</p></textarea>
+  <script>
+    // Verbatim from a TinyMCE 6 "quick start" style integration.
+    tinymce.init({
+      selector: '#content',
+      height: 400,
+      plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+      toolbar: 'undo redo | blocks | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    }).then(function (editors) { window.__editors = editors; });
+  </script>
+</body>
+</html>

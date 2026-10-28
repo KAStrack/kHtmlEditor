@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Toolbar and menus — kHtmlEditor</title>
+  <meta name="description" content="Toolbar strings, modes, groups, menubar configuration, context menus and quick toolbars.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html" class="active">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="toolbar-and-menus">Toolbar and menus</h1>
+<h2 id="toolbar">Toolbar</h2>
+<p>The <code>toolbar</code> option is a string of button names separated by spaces, with <code>|</code> for group separators. Arrays work too: each entry is one group or one row.</p>
+<pre><code class="language-js">toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline | bullist numlist | link image'
+toolbar: ['undo redo | bold italic', 'link image table']   // two rows
+toolbar1: 'undo redo | bold italic',                         // numbered rows
+toolbar2: 'link image table',
+toolbar: false                                               // no toolbar</code></pre>
+<p>Unknown button names are skipped with a console warning, so configurations written for plugins you do not load still initialise.</p>
+<h3 id="modes">Modes</h3>
+<p><code>toolbar_mode</code> controls what happens when buttons do not fit:</p>
+<ul>
+<li><code>wrap</code> (default): buttons wrap onto further rows.
+</li>
+<li><code>sliding</code>: an overflow button reveals the remaining buttons below the toolbar.
+</li>
+<li><code>floating</code>: an overflow button opens the remaining buttons in a popup.
+</li>
+<li><code>scrolling</code>: the toolbar scrolls horizontally.
+</li></ul>
+<p><code>toolbar_sticky</code> keeps the toolbar visible while scrolling long content; <code>toolbar_location: 'bottom'</code> moves it under the editing area.</p>
+<h3 id="groups">Groups</h3>
+<pre><code class="language-js">toolbar: 'formatting | alignment',
+toolbar_groups: {
+  formatting: { icon: 'format', tooltip: 'Formatting', items: 'bold italic underline | superscript subscript' },
+  alignment:  { icon: 'align-left', tooltip: 'Alignment', items: 'alignleft aligncenter alignright alignjustify' }
+}</code></pre>
+<p>The full list of built-in buttons is in the <a href="../reference/toolbar-buttons.html">toolbar buttons reference</a>.</p>
+<h2 id="menubar">Menubar</h2>
+<pre><code class="language-js">menubar: 'file edit view insert format tools table help',   // default order; false hides it
+menu: {
+  file: { title: 'File', items: 'newdocument restoredraft | preview | print' },
+  custom: { title: 'Custom', items: 'mybutton | undo redo' }
+},
+removed_menuitems: 'newdocument print'</code></pre>
+<p>Menu item names are listed in the <a href="../reference/menu-items.html">menu items reference</a>. Custom items come from <code>editor.ui.registry.addMenuItem()</code>.</p>
+<h2 id="context-menu">Context menu</h2>
+<p>Right-clicking (or long-pressing) shows the items of the <code>contextmenu</code> option that apply to the clicked element. Plugins register providers: <code>link</code>, <code>image</code>, <code>table</code>, <code>media</code>. Set <code>contextmenu: false</code> for the browser's native menu, or <code>contextmenu_never_use_native: true</code> to always show the editor's.</p>
+<h2 id="quick-toolbars">Quick toolbars</h2>
+<p>The <code>quickbars</code> plugin shows toolbars next to the selection:</p>
+<pre><code class="language-js">plugins: 'quickbars link image table',
+quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
+quickbars_insert_toolbar: 'quickimage quicktable',   // on empty lines
+quickbars_image_toolbar: 'alignleft aligncenter alignright'</code></pre>
+<p>Set any of them to <code>false</code> to disable that toolbar. The <code>table</code> plugin has its own <code>table_toolbar</code> context toolbar; the <code>link</code> plugin's <code>link_context_toolbar: true</code> shows an inline URL form when the caret is inside a link.</p>
+<h2 id="status-bar">Status bar</h2>
+<p>The status bar shows the element path (<code>elementpath</code>), the word count when the <code>wordcount</code> plugin is loaded, the branding link (<code>branding: false</code> to hide) and the resize handle (<code>resize: false</code>, or <code>'both'</code> for horizontal resizing). <code>statusbar: false</code> removes it.</p>
+<h2 id="keyboard-access">Keyboard access</h2>
+<p>&lt;kbd&gt;Alt+F9&lt;/kbd&gt; focuses the menubar, &lt;kbd&gt;Alt+F10&lt;/kbd&gt; the toolbar, &lt;kbd&gt;Alt+F11&lt;/kbd&gt; the element path and &lt;kbd&gt;Alt+F12&lt;/kbd&gt; returns to the editor. Arrow keys move within a toolbar or menu, &lt;kbd&gt;Tab&lt;/kbd&gt; between groups, &lt;kbd&gt;Esc&lt;/kbd&gt; closes menus and dialogs.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

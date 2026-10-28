@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Writing plugins — kHtmlEditor</title>
+  <meta name="description" content="Package editor extensions as plugins with options, commands, UI and events.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html" class="active">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="writing-plugins">Writing plugins</h1>
+<p>A plugin is a function that receives the editor. Register it with <code>kHtmlEditor.PluginManager.add(name, fn)</code> (or <code>tinymce.PluginManager.add</code> through the shim) before <code>init()</code>, then name it in <code>plugins</code>.</p>
+<pre><code class="language-js">kHtmlEditor.PluginManager.add('highlighter', (editor) =&gt; {
+  // 1. Options with types and defaults
+  editor.options.register('highlighter_color', { processor: 'string', default: '#fff3bf' });
+
+  // 2. Formats
+  editor.on('PreInit', () =&gt; {
+    editor.formatter.register('marker', { inline: 'mark', styles: { backgroundColor: '%color' } });
+  });
+
+  // 3. Commands
+  editor.addCommand('mceToggleMarker', () =&gt; {
+    editor.formatter.toggle('marker', { color: editor.options.get('highlighter_color') });
+    editor.nodeChanged();
+  });
+
+  // 4. UI
+  editor.ui.registry.addToggleButton('marker', {
+    icon: 'highlight-bg-color',
+    tooltip: 'Marker',
+    onAction: () =&gt; editor.execCommand('mceToggleMarker'),
+    onSetup: (api) =&gt; editor.formatter.formatChanged('marker', api.setActive).unbind
+  });
+  editor.ui.registry.addMenuItem('marker', { text: 'Marker', icon: 'highlight-bg-color', onAction: () =&gt; editor.execCommand('mceToggleMarker') });
+
+  // 5. Content filters (optional)
+  editor.on('PreInit', () =&gt; {
+    editor.parser.addNodeFilter('mark', (nodes) =&gt; nodes.forEach((n) =&gt; n.setAttribute('data-mce-marker', '1')));
+    editor.serializer.addAttributeFilter('data-mce-marker', (nodes) =&gt; nodes.forEach((n) =&gt; n.removeAttribute('data-mce-marker')));
+  });
+
+  // 6. Public API available as editor.plugins.highlighter
+  return {
+    getMetadata: () =&gt; ({ name: 'Highlighter', url: 'https://example.com' }),
+    toggle: () =&gt; editor.execCommand('mceToggleMarker')
+  };
+});</code></pre>
+<h2 id="lifecycle">Lifecycle</h2>
+<p>Plugins are created after options are resolved and before the UI renders, so they can register buttons the toolbar will use. Useful events, in order: <code>PreInit</code> (parser, serializer, formatter and selection exist; register filters and formats here), <code>PostRender</code> (UI rendered), <code>init</code> (editor usable; content loaded), <code>remove</code>.</p>
+<h2 id="loading-plugins-from-files">Loading plugins from files</h2>
+<p><code>external_plugins: { highlighter: '/js/highlighter.js' }</code> loads the script and expects it to call <code>PluginManager.add('highlighter', ...)</code>. The plugin receives <code>(editor, url)</code> where <code>url</code> is the script's base URL.</p>
+<h2 id="autocompleters">Autocompleters</h2>
+<pre><code class="language-js">editor.ui.registry.addAutocompleter('mentions', {
+  trigger: '@',
+  minChars: 1,
+  columns: 1,
+  fetch: (pattern) =&gt; fetch('/api/users?q=' + encodeURIComponent(pattern)).then((r) =&gt; r.json())
+    .then((users) =&gt; users.map((u) =&gt; ({ type: 'autocompleteitem', value: u.id, text: u.name, icon: '👤' }))),
+  onAction: (api, rng, value) =&gt; {
+    editor.selection.setRng(rng);
+    editor.insertContent(`&lt;span class=&quot;mention&quot; data-user=&quot;${value}&quot;&gt;@${value}&lt;/span&gt;&amp;nbsp;`);
+    api.hide();
+  }
+});</code></pre>
+<h2 id="non-editable-and-object-content">Non-editable and object content</h2>
+<p>Give elements <code>contenteditable=&quot;false&quot;</code> (or the <code>noneditable_class</code>, default <code>mceNonEditable</code>) to make them selectable units that keyboard navigation and deletion treat as one object. Mark helper elements that must never be saved with <code>data-mce-bogus=&quot;1&quot;</code> (unwrapped on output) or <code>data-mce-bogus=&quot;all&quot;</code> (removed with their content).</p>
+<h2 id="writing-tests">Writing tests</h2>
+<p>The repository uses Vitest for the content pipeline and Playwright for everything that needs a browser; <code>tests/e2e/harness.html</code> is a blank page that loads <code>dist/khtmleditor.js</code>. Plugin specs live in <code>tests/e2e/plugins/</code>.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

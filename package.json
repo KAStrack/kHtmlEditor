@@ -1,6 +1,6 @@
 {
   "name": "khtmleditor",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "kHtmlEditor \u2014 a from-scratch, dependency-free rich text HTML editor that is a drop-in replacement for TinyMCE.",
   "license": "MIT",
   "type": "module",
@@ -30,7 +30,8 @@
     "test:xss": "vitest run tests/unit/xss",
     "e2e": "playwright test",
     "sync-docs": "node scripts/sync-docs.mjs",
-    "release:check": "npm run typecheck && npm run build && npm run build:types && npm test && npm run sync-docs"
+    "build:docs": "node scripts/build-docs.mjs",
+    "release:check": "npm run typecheck && npm run build && npm run build:types && npm test && npm run build:docs && npm run sync-docs"
   },
   "keywords": [
     "wysiwyg",

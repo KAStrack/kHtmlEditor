@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Localisation — kHtmlEditor</title>
+  <meta name="description" content="Translating the UI with TinyMCE-format language packs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html" class="active">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="localisation">Localisation</h1>
+<p>The UI ships in English. Every string passes through <code>editor.translate()</code>, so a language pack translates the whole interface including plugins.</p>
+<h2 id="loading-a-language">Loading a language</h2>
+<pre><code class="language-js">kHtmlEditor.init({
+  selector: 'textarea',
+  language: 'de',
+  language_url: '/langs/de.js'   // optional: loaded automatically when language is not 'en'
+});</code></pre>
+<p>A language file registers its strings with <code>kHtmlEditor.addI18n(code, strings)</code> (or <code>tinymce.addI18n</code> via the shim), so TinyMCE language packs load unchanged:</p>
+<pre><code class="language-js">tinymce.addI18n('de', {
+  &quot;Bold&quot;: &quot;Fett&quot;,
+  &quot;Italic&quot;: &quot;Kursiv&quot;,
+  &quot;Insert/edit link&quot;: &quot;Link einfügen/bearbeiten&quot;,
+  &quot;{0} words&quot;: &quot;{0} Wörter&quot;,
+  &quot;_dir&quot;: &quot;ltr&quot;
+});</code></pre>
+<p>Placeholders <code>{0}</code>, <code>{1}</code> are substituted when <code>translate(['{0} words', count])</code> is called with an array. The special <code>_dir: 'rtl'</code> key switches the UI direction.</p>
+<h2 id="content-direction">Content direction</h2>
+<p><code>directionality: 'rtl'</code> sets the direction of the content; the <code>directionality</code> plugin adds <code>ltr</code>/<code>rtl</code> buttons that set <code>dir</code> on selected blocks.</p>
+<h2 id="spell-checking">Spell checking</h2>
+<p><code>browser_spellcheck: true</code> enables the browser's spell checker inside the content; <code>content_langs</code> lists languages for the <code>language</code> toolbar button, which marks selections with <code>lang</code> attributes.</p>
+<h2 id="api">API</h2>
+<pre><code class="language-js">kHtmlEditor.addI18n('fr', { 'Bold': 'Gras' });
+kHtmlEditor.translate('Bold');     // uses the active language
+editor.translate('Bold');
+kHtmlEditor.i18n.getCode();         // 'fr'
+kHtmlEditor.i18n.setCode('en');</code></pre>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

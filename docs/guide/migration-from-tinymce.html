@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Migrating from TinyMCE — kHtmlEditor</title>
+  <meta name="description" content="Replace TinyMCE with kHtmlEditor without changing your configuration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html" class="active">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="migrating-from-tinymce">Migrating from TinyMCE</h1>
+<p class="lead">kHtmlEditor implements TinyMCE's configuration, content API, event model, UI registry and dialog specification. For most sites migration is a script tag swap.</p>
+<h2 id="option-a-rename-the-global">Option A: rename the global</h2>
+<p>Replace the TinyMCE script with <code>khtmleditor.min.js</code> and change <code>tinymce.init</code> to <code>kHtmlEditor.init</code>. Everything inside the configuration object stays as it is.</p>
+<pre><code class="language-html">&lt;!-- before --&gt;
+&lt;script src=&quot;https://cdn.tiny.cloud/1/your-key/tinymce/7/tinymce.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;tinymce.init({ selector: 'textarea', plugins: 'lists link image table' });&lt;/script&gt;
+
+&lt;!-- after --&gt;
+&lt;script src=&quot;/js/khtmleditor.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;kHtmlEditor.init({ selector: 'textarea', plugins: 'lists link image table' });&lt;/script&gt;</code></pre>
+<h2 id="option-b-the-shim-zero-code-changes">Option B: the shim (zero code changes)</h2>
+<p>Load the shim after the main script. It aliases <code>window.tinymce</code> and <code>window.tinyMCE</code> to <code>kHtmlEditor</code>, so untouched integrations, custom plugins registered with <code>tinymce.PluginManager.add()</code> and third-party code calling <code>tinymce.get()</code> keep working.</p>
+<pre><code class="language-html">&lt;script src=&quot;/js/khtmleditor.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/js/khtmleditor.tinymce-shim.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>The shim refuses to override a real TinyMCE global if one is already present, so loading both by accident does not break anything.</p>
+<h2 id="what-stays-the-same">What stays the same</h2>
+<ul>
+<li><strong>Options</strong>: every open-source TinyMCE 6/7 option name, including <code>toolbar</code>, <code>menubar</code>, <code>plugins</code>, <code>content_css</code>, <code>valid_elements</code>, <code>images_upload_url</code>, <code>file_picker_callback</code>, <code>setup</code>, <code>init_instance_callback</code>. See the <a href="../reference/options.html">options reference</a>.
+</li>
+<li><strong>Toolbar syntax</strong>: <code>'undo redo | bold italic'</code>, arrays, <code>toolbar1..9</code>, <code>toolbar_mode</code>, <code>toolbar_sticky</code>, <code>toolbar_groups</code>.
+</li>
+<li><strong>Editor API</strong>: <code>getContent</code>, <code>setContent</code>, <code>insertContent</code>, <code>execCommand</code>, <code>queryCommandState</code>, <code>on</code>/<code>off</code>/<code>dispatch</code> (and <code>fire</code>), <code>selection</code>, <code>dom</code>, <code>formatter</code>, <code>undoManager</code>, <code>windowManager</code>, <code>notificationManager</code>, <code>uploadImages</code>, <code>isDirty</code>, <code>save</code>, <code>remove</code> and the rest of the <a href="../reference/editor-api.html">Editor API</a>.
+</li>
+<li><strong>UI registry</strong>: <code>editor.ui.registry.addButton</code>, <code>addToggleButton</code>, <code>addMenuButton</code>, <code>addSplitButton</code>, <code>addMenuItem</code>, <code>addNestedMenuItem</code>, <code>addToggleMenuItem</code>, <code>addContextToolbar</code>, <code>addContextForm</code>, <code>addContextMenu</code>, <code>addAutocompleter</code>, <code>addIcon</code>.
+</li>
+<li><strong>Dialogs</strong>: <code>editor.windowManager.open(spec)</code> with panels, tab panels and every component type listed in the <a href="../reference/dialog-spec.html">dialog specification</a>; <code>alert</code>, <code>confirm</code>, <code>openUrl</code>.
+</li>
+<li><strong>Upload contract</strong>: multipart <code>POST</code> with a <code>file</code> field answered with <code>{&quot;location&quot;: &quot;...&quot;}</code>, <code>images_upload_handler(blobInfo, progress)</code>, <code>automatic_uploads</code>, <code>images_upload_base_path</code>, <code>images_upload_credentials</code>.
+</li>
+<li><strong>Events</strong>: <code>init</code>, <code>change</code>, <code>input</code>, <code>NodeChange</code>, <code>SetContent</code>, <code>GetContent</code>, <code>PastePreProcess</code>, <code>ExecCommand</code>, <code>ObjectResized</code>, <code>TableModified</code>, and so on. See <a href="../reference/events.html">Events</a>.
+</li>
+<li><strong>Markup</strong>: internal attributes use TinyMCE's <code>data-mce-*</code> names and the content body carries <code>mce-content-body</code>, so existing content CSS and plugin code keep matching.
+</li></ul>
+<h2 id="deprecated-names-are-translated">Deprecated names are translated</h2>
+<p>TinyMCE 4/5 option and button names are mapped to their 6/7 equivalents with a console warning: <code>toolbar_drawer</code>, <code>font_formats</code>, <code>fontsize_formats</code>, <code>lineheight_formats</code>, <code>paste_filter_drop</code>, <code>fontselect</code>, <code>fontsizeselect</code>, <code>formatselect</code>, <code>styleselect</code>, <code>lineheightselect</code>. Plugins that TinyMCE merged into the core (<code>paste</code>, <code>textcolor</code>, <code>colorpicker</code>, <code>contextmenu</code>, <code>hr</code>, <code>textpattern</code>, <code>print</code>, <code>noneditable</code>) are accepted and ignored; premium-only plugin names produce a warning and are skipped.</p>
+<h2 id="differences-to-know-about">Differences to know about</h2>
+<ul>
+<li>There is no cloud, licence key or <code>promotion</code> banner. <code>license_key</code>, <code>promotion</code>, <code>branding</code> (default on, points at this project) and <code>cloud_*</code> options are accepted and ignored where meaningless.
+</li>
+<li><code>inline: true</code> is not available in 1.0 (planned). Every editor renders in an iframe.
+</li>
+<li>Premium plugins (comments, AI, PowerPaste, spell checker, export, mentions, etc.) are not available. <code>accordion</code> is not included in 1.0.
+</li>
+<li><code>kHtmlEditor.majorVersion</code> reports <code>'7'</code> (the API emulated); the real version is <code>kHtmlEditor.version</code>.
+</li>
+<li><code>code_view: 'inline'</code> is an extension: the source code button can swap the editing area for a textarea instead of opening a dialog.
+</li>
+<li>Video and audio file uploads are an extension: <code>media_upload_url</code> / <code>media_upload_handler</code> (falling back to the image options).
+</li></ul>
+<h2 id="verifying-a-migration">Verifying a migration</h2>
+<p>The repository's <code>tests/compat/</code> folder runs real <code>tinymce.init({...})</code> configurations through the shim with Playwright. Drop copies of your own configurations into <code>tests/compat/configs/</code> to cover them. See the <a href="../reference/compat-matrix.html">compatibility matrix</a> for the complete list of options, buttons and events.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

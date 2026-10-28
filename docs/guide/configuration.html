@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuration — kHtmlEditor</title>
+  <meta name="description" content="The options you will reach for first, and how options work.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html" class="active">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="configuration">Configuration</h1>
+<p>Options are passed to <code>kHtmlEditor.init()</code> and can be read and changed at runtime through <code>editor.options</code>. Every option has a registered type and default; unknown options are kept so plugins and <code>setup</code> code can read them.</p>
+<pre><code class="language-js">kHtmlEditor.init({
+  selector: 'textarea.rich',   // CSS selector, or `target: element`
+  height: 400,                 // number of pixels or any CSS length
+  min_height: 200,
+  max_height: 800,
+  plugins: 'lists link image table code',
+  menubar: 'file edit view insert format tools table help',
+  toolbar: 'undo redo | blocks | bold italic | link image table | code',
+  placeholder: 'Start typing...',
+  language: 'en',
+  skin: 'oxide',               // or 'oxide-dark'
+  content_css: 'default',      // 'default', 'dark', false, or URL(s)
+  content_style: 'body { font-family: Georgia, serif; }',
+  readonly: false,
+  browser_spellcheck: true,
+  setup: (editor) =&gt; {
+    editor.on('init', () =&gt; console.log('ready'));
+  }
+});</code></pre>
+<h2 id="reading-and-changing-options">Reading and changing options</h2>
+<pre><code class="language-js">editor.options.get('toolbar_mode');          // 'wrap'
+editor.options.set('smart_paste', false);
+editor.options.isRegistered('image_caption'); // true when the image plugin is loaded
+editor.options.register('my_option', { processor: 'string', default: 'x' });</code></pre>
+<p><code>editor.getParam(name)</code> and <code>editor.settings</code> are kept as deprecated aliases.</p>
+<h2 id="defaults-for-every-editor">Defaults for every editor</h2>
+<pre><code class="language-js">kHtmlEditor.overrideDefaults({ height: 300, menubar: false, promotion: false });</code></pre>
+<h2 id="common-groups-of-options">Common groups of options</h2>
+<table><thead><tr><th>Area</th><th>Options</th></tr></thead><tbody><tr><td>Surface</td><td><code>height</code>, <code>width</code>, <code>min_height</code>, <code>max_height</code>, <code>resize</code>, <code>placeholder</code>, <code>auto_focus</code>, <code>readonly</code>, <code>disabled</code></td></tr><tr><td>UI</td><td><code>toolbar</code>, <code>toolbar_mode</code>, <code>toolbar_sticky</code>, <code>toolbar_location</code>, <code>toolbar_groups</code>, <code>menubar</code>, <code>menu</code>, <code>removed_menuitems</code>, <code>statusbar</code>, <code>elementpath</code>, <code>branding</code>, <code>contextmenu</code>, <code>skin</code>, <code>icons</code>, <code>ui_mode</code></td></tr><tr><td>Formatting</td><td><code>formats</code>, <code>style_formats</code>, <code>block_formats</code>, <code>font_family_formats</code>, <code>font_size_formats</code>, <code>line_height_formats</code>, <code>color_map</code>, <code>color_cols</code>, <code>custom_colors</code></td></tr><tr><td>Content</td><td><code>content_css</code>, <code>content_style</code>, <code>body_class</code>, <code>body_id</code>, <code>forced_root_block</code>, <code>keep_styles</code>, <code>text_patterns</code>, <code>inline_boundaries</code></td></tr><tr><td>Filtering</td><td><code>schema</code>, <code>valid_elements</code>, <code>extended_valid_elements</code>, <code>invalid_elements</code>, <code>valid_children</code>, <code>valid_styles</code>, <code>invalid_styles</code>, <code>valid_classes</code>, <code>custom_elements</code>, <code>protect</code></td></tr><tr><td>Output</td><td><code>entity_encoding</code>, <code>entities</code>, <code>element_format</code>, <code>indent</code>, <code>remove_trailing_brs</code>, <code>convert_urls</code>, <code>relative_urls</code>, <code>remove_script_host</code>, <code>urlconverter_callback</code></td></tr><tr><td>Uploads</td><td><code>images_upload_url</code>, <code>images_upload_handler</code>, <code>images_upload_base_path</code>, <code>images_upload_credentials</code>, <code>automatic_uploads</code>, <code>images_file_types</code>, <code>media_upload_url</code>, <code>media_upload_handler</code>, <code>media_file_types</code>, <code>file_picker_callback</code>, <code>file_picker_types</code></td></tr><tr><td>Paste</td><td><code>paste_as_text</code>, <code>paste_data_images</code>, <code>paste_block_drop</code>, <code>paste_preprocess</code>, <code>paste_postprocess</code>, <code>paste_webkit_styles</code>, <code>paste_remove_styles_if_webkit</code>, <code>smart_paste</code></td></tr><tr><td>Forms</td><td><code>hidden_input</code>, <code>add_form_submit_trigger</code>, <code>submit_patch</code>, <code>add_unload_trigger</code></td></tr></tbody></table>
+<p>The complete generated list, with types and defaults, is in the <a href="../reference/options.html">options reference</a>.</p>
+<h2 id="plugins">Plugins</h2>
+<p><code>plugins</code> accepts a space- or comma-separated string or an array. All plugins ship in the bundle; naming one simply activates it. <code>external_plugins</code> loads additional scripts by URL; each should call <code>kHtmlEditor.PluginManager.add(name, fn)</code> (or <code>tinymce.PluginManager.add</code> through the shim).</p>
+<p>Available: <code>advlist anchor autolink autoresize autosave charmap code codesample directionality emoticons fullscreen help image importcss insertdatetime link lists media nonbreaking pagebreak preview quickbars save searchreplace table visualblocks visualchars wordcount</code>.</p>
+<h2 id="multiple-editors">Multiple editors</h2>
+<p>One <code>init()</code> call creates an editor for every element matched by <code>selector</code>. Address them with <code>kHtmlEditor.get(id)</code>, <code>kHtmlEditor.editors</code>, or <code>kHtmlEditor.activeEditor</code>.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Theming and skins — kHtmlEditor</title>
+  <meta name="description" content="Skins, CSS variables, content CSS and icons.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html" class="active">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="theming-and-skins">Theming and skins</h1>
+<h2 id="skins">Skins</h2>
+<p>Two UI skins ship in the bundle and need no extra files: <code>oxide</code> (light, default) and <code>oxide-dark</code>. <code>skin: 'auto'</code> follows the operating system preference.</p>
+<pre><code class="language-js">skin: 'oxide-dark',
+content_css: 'dark'</code></pre>
+<p><code>skin: false</code> disables the bundled skin so you can provide your own CSS; <code>skin_url</code> points at a directory containing <code>skin.min.css</code> and <code>content.min.css</code>, matching TinyMCE's layout.</p>
+<h2 id="css-variables">CSS variables</h2>
+<p>The UI is styled through custom properties on the editor container (<code>.khe-container</code>), so a palette is a few lines:</p>
+<pre><code class="language-css">.khe-container {
+  --khe-bg: #ffffff;            /* UI background */
+  --khe-bg-subtle: #f7f8fa;     /* toolbar / status bar background */
+  --khe-fg: #222f3e;            /* UI text */
+  --khe-fg-muted: #6b7280;
+  --khe-border: #e1e3e8;
+  --khe-accent: #2f6fed;        /* active state, focus rings, primary buttons */
+  --khe-accent-fg: #ffffff;
+  --khe-hover: #e8ecf3;         /* button hover */
+  --khe-active: #dde3ee;        /* pressed toggle buttons */
+  --khe-menu-hover: #e8ecf3;
+  --khe-focus: #2f6fed;
+  --khe-content-bg: #ffffff;    /* source view and dialog text areas */
+  --khe-radius: 6px;
+  --khe-font: system-ui, sans-serif;
+  --khe-font-size: 14px;
+}</code></pre>
+<p>Element classes are prefixed <code>khe-</code> (<code>khe-toolbar</code>, <code>khe-tbtn</code>, <code>khe-menubar</code>, <code>khe-statusbar</code>, <code>khe-dialog</code>, <code>khe-menu</code>, <code>khe-notification</code>); each toolbar button carries <code>data-khe-name=&quot;bold&quot;</code> for targeting. The content body keeps TinyMCE's <code>mce-content-body</code> class and <code>data-mce-*</code> attributes so existing content CSS works.</p>
+<h2 id="content-css">Content CSS</h2>
+<p><code>content_css</code> accepts <code>'default'</code>, <code>'dark'</code>, <code>false</code> or one or more URLs (string, comma separated string or array); <code>content_style</code> adds inline CSS; <code>body_class</code> and <code>body_id</code> set the body attributes inside the iframe. <code>font_css</code> loads font stylesheets into the UI as well as the content. With the <code>importcss</code> plugin, class selectors from the content stylesheets appear in the Formats menu.</p>
+<h2 id="icons">Icons</h2>
+<p>Icons are inline SVG strings keyed by TinyMCE's icon names (<code>bold</code>, <code>image</code>, <code>table-insert-row-above</code>, and so on). Add or override one:</p>
+<pre><code class="language-js">editor.ui.registry.addIcon('shout', '&lt;svg width=&quot;24&quot; height=&quot;24&quot;&gt;&lt;path d=&quot;...&quot;/&gt;&lt;/svg&gt;');</code></pre>
+<p><code>icons</code> and <code>icons_url</code> are accepted for compatibility and ignored; use <code>addIcon</code> to replace individual icons.</p>
+<h2 id="sizing">Sizing</h2>
+<p><code>height</code>, <code>width</code>, <code>min_height</code> and <code>max_height</code> size the container; the <code>resize</code> handle lets users adjust it; the <code>autoresize</code> plugin grows the editor with its content; the <code>fullscreen</code> plugin fills the viewport. <code>ResizeEditor</code> fires after any of these.</p>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

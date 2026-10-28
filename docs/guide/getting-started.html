@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Getting started — kHtmlEditor</title>
+  <meta name="description" content="Install kHtmlEditor, initialise it on a textarea and read the content back.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="page-header page-header--compact">
+  <a class="github-link" href="https://github.com/KAStrack/kHtmlEditor" target="_blank" rel="noopener noreferrer" aria-label="View kHtmlEditor on GitHub">GitHub</a>
+  <h1><a href="../index.html"><span>k</span>HtmlEditor</a></h1>
+  <div class="header-links">
+    <a class="header-link" href="../demo/">Demo</a>
+    <a class="header-link" href="../examples/">Examples</a>
+    <a class="header-link" href="../guide/getting-started.html">Guide</a>
+    <a class="header-link" href="../reference/options.html">Reference</a>
+  </div>
+</header>
+<div class="container">
+  <div class="docs-layout">
+    <nav class="docs-nav" aria-label="Documentation"><h4>Guide</h4><a href="../guide/getting-started.html" class="active">Getting started</a><a href="../guide/migration-from-tinymce.html">Migrating from TinyMCE</a><a href="../guide/configuration.html">Configuration</a><a href="../guide/toolbar-and-menus.html">Toolbar and menus</a><a href="../guide/sanitisation.html">Sanitisation and output</a><a href="../guide/uploads.html">Image and media uploads</a><a href="../guide/dialogs-and-custom-buttons.html">Dialogs and custom buttons</a><a href="../guide/writing-plugins.html">Writing plugins</a><a href="../guide/theming.html">Theming and skins</a><a href="../guide/i18n.html">Localisation</a><a href="../guide/accessibility.html">Accessibility</a><h4>Reference</h4><a href="../reference/options.html">Options</a><a href="../reference/toolbar-buttons.html">Toolbar buttons</a><a href="../reference/menu-items.html">Menu items</a><a href="../reference/editor-api.html">Editor API</a><a href="../reference/global-api.html">Global API</a><a href="../reference/events.html">Events</a><a href="../reference/dialog-spec.html">Dialog specification</a><a href="../reference/formats.html">Formats</a><a href="../reference/keyboard-shortcuts.html">Keyboard shortcuts</a><a href="../reference/compat-matrix.html">TinyMCE compatibility matrix</a></nav>
+    <main class="docs-content">
+<h1 id="getting-started">Getting started</h1>
+<p class="lead">kHtmlEditor is a rich text HTML editor built from scratch as a drop-in replacement for TinyMCE. One script, no dependencies, MIT licensed.</p>
+<h2 id="install">Install</h2>
+<p>Download <code>khtmleditor.min.js</code> from the <a href="https://github.com/KAStrack/kHtmlEditor/releases">GitHub releases</a> (or copy <code>dist/</code> from the repository) and include it on your page. There is nothing else to load: the UI skin, the content stylesheet and every plugin are bundled.</p>
+<pre><code class="language-html">&lt;script src=&quot;/js/khtmleditor.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+<p>With npm:</p>
+<pre><code class="language-bash">npm install khtmleditor</code></pre>
+<pre><code class="language-js">import kHtmlEditor from 'khtmleditor';</code></pre>
+<h2 id="initialise">Initialise</h2>
+<p>Turn a textarea into an editor with <code>kHtmlEditor.init()</code>. The options are the same as TinyMCE's.</p>
+<pre><code class="language-html">&lt;textarea id=&quot;editor&quot;&gt;&lt;p&gt;Hello world&lt;/p&gt;&lt;/textarea&gt;
+&lt;script&gt;
+  kHtmlEditor.init({
+    selector: '#editor',
+    height: 400,
+    plugins: 'lists link image table code',
+    toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image table | code'
+  });
+&lt;/script&gt;</code></pre>
+<p><code>init()</code> returns a promise that resolves with the created editors once they are ready.</p>
+<h2 id="read-and-write-content">Read and write content</h2>
+<pre><code class="language-js">const editor = kHtmlEditor.get('editor');   // by element id
+editor.getContent();                          // '&lt;p&gt;Hello world&lt;/p&gt;'
+editor.setContent('&lt;h1&gt;Title&lt;/h1&gt;&lt;p&gt;Body&lt;/p&gt;');
+editor.insertContent('&lt;strong&gt;at the caret&lt;/strong&gt;');
+editor.getContent({ format: 'text' });        // plain text</code></pre>
+<p>Content is cleaned on the way in and on the way out: unknown elements, event handler attributes and dangerous URLs never reach the document. See <a href="sanitisation.html">Sanitisation and output</a>.</p>
+<h2 id="forms">Forms</h2>
+<p>When the textarea is inside a form, the editor writes its HTML back to the textarea when the form is submitted, so a normal <code>POST</code> works unchanged. Call <code>kHtmlEditor.triggerSave()</code> to do the same by hand (for example before an AJAX request).</p>
+<h2 id="next-steps">Next steps</h2>
+<ul>
+<li><a href="migration-from-tinymce.html">Migrating from TinyMCE</a> if you have an existing integration.
+</li>
+<li><a href="configuration.html">Configuration</a> for the most common options.
+</li>
+<li><a href="toolbar-and-menus.html">Toolbar and menus</a> to shape the UI.
+</li>
+<li><a href="uploads.html">Image and media uploads</a> to connect your server.
+</li>
+<li>The <a href="../demo/">live demo</a> and <a href="../examples/">examples</a> to see it running.
+</li></ul>
+    </main>
+  </div>
+</div>
+<footer class="page-footer">
+  <p><a href="https://www.kastrack.com" target="_blank" rel="noopener">Sponsored by KAStrack</a></p>
+  <p>kHtmlEditor — MIT License — Vanilla JS, zero dependencies.</p>
+</footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Compat: image upload config</title>
+  <script src="/dist/khtmleditor.js"></script>
+  <script src="/dist/khtmleditor.tinymce-shim.js"></script>
+</head>
+<body>
+  <textarea id="editor"><p>Upload test</p></textarea>
+  <script>
+    tinyMCE.init({
+      selector: '#editor',
+      plugins: 'image code',
+      toolbar: 'image code',
+      menubar: false,
+      images_upload_url: '/postAcceptor.php',
+      images_upload_base_path: '/some/basepath',
+      images_upload_credentials: true,
+      automatic_uploads: true,
+      images_reuse_filename: true,
+      convert_urls: false,
+      file_picker_types: 'image',
+      setup: function (editor) {
+        editor.on('init', function () {
+          editor.setContent('<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==" alt="dot"></p>');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
