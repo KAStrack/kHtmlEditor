@@ -528,8 +528,12 @@ const renderColorPicker = (ctx: DialogContext, item: any): HTMLElement => {
 
 const renderDropzone = (ctx: DialogContext, item: any): HTMLElement => {
   const { editor } = ctx;
-  const input = h('input', { type: 'file', accept: 'image/*', multiple: true }) as HTMLInputElement;
-  const zone = h('div', { class: 'khe-dropzone', tabindex: '0', role: 'button', 'aria-label': translate(editor, 'Drop an image here') }, h('div', {}, translate(editor, 'Drop an image here')), h('div', { style: 'margin-top:6px' }, h('span', { class: 'khe-button' }, translate(editor, 'Browse for an image'))), input);
+  const accept = (item.accept as string | undefined) || 'image/*';
+  const isImageZone = /^image\//.test(accept);
+  const dropLabel = isImageZone ? 'Drop an image here' : 'Drop a file here';
+  const browseLabel = isImageZone ? 'Browse for an image' : 'Browse for a file';
+  const input = h('input', { type: 'file', accept, multiple: item.multiple === false ? null : true }) as HTMLInputElement;
+  const zone = h('div', { class: 'khe-dropzone', tabindex: '0', role: 'button', 'aria-label': translate(editor, dropLabel) }, h('div', {}, translate(editor, dropLabel)), h('div', { style: 'margin-top:6px' }, h('span', { class: 'khe-button' }, translate(editor, browseLabel))), input);
   let files: File[] = [];
   const setFiles = (list: FileList | File[] | null) => {
     files = list ? Array.from(list) : [];

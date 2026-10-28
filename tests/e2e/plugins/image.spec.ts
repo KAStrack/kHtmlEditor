@@ -67,6 +67,12 @@ test.describe('image plugin', () => {
     await page.keyboard.press('End');
     await page.keyboard.type('!');
     expect(await getContent(page)).toContain('<figcaption>Caption!</figcaption>');
+    // Content set from outside gets the same editing attributes and serialises without them.
+    await setContent(page, '<figure class="image"><img src="/pics/b.png" alt="b"><figcaption>Cap</figcaption></figure>');
+    await expect(frame.locator('figure')).toHaveAttribute('contenteditable', 'false');
+    await expect(frame.locator('figcaption')).toHaveAttribute('contenteditable', 'true');
+    expect(await getContent(page)).toBe('<figure class="image"><img src="/pics/b.png" alt="b">\n<figcaption>Cap</figcaption>\n</figure>');
+    await setContent(page, '<figure class="image"><img src="/pics/a.png" alt="a"><figcaption>Caption!</figcaption></figure>');
     // Unchecking removes the figure again.
     await frame.locator('img').dblclick();
     await dialog(page).locator('input[name="caption"]').uncheck();
