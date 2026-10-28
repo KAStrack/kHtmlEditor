@@ -6,7 +6,14 @@ versioning.
 
 ## [Unreleased]
 
-(nothing yet)
+### Fixed
+- Sliding and floating toolbars lay out their overflow once synchronously on `init`, so every
+  button is in its final place when the editor reports `initialized`. Previously the first layout
+  waited for a ResizeObserver animation frame, which headless WebKit runs after init.
+- WebKit now runs locally and the full e2e and compat suite passes on Chromium, Firefox and WebKit
+  (153 tests each). Tests of editor shortcuts press the modifier the editor binds (`Meta` on Mac
+  user agents such as Playwright's Desktop Safari device) instead of `ControlOrMeta`, which follows
+  the host OS.
 
 ## [1.0.0] - 2026-10-28
 

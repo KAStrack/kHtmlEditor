@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openHarness, initEditor, getContent, setContent, setCaret, selectText } from '../helpers';
+import { openHarness, initEditor, getContent, setContent, setCaret, selectText, shortcutKey } from '../helpers';
 
 const exec = (page: any, cmd: string, value?: any) => page.evaluate(({ cmd, value }: any) => (window as any).kHtmlEditor.activeEditor.execCommand(cmd, false, value), { cmd, value });
 const state = (page: any, cmd: string) => page.evaluate((c: string) => (window as any).kHtmlEditor.activeEditor.queryCommandState(c), cmd);
@@ -166,7 +166,7 @@ test.describe('formatter', () => {
   test('keyboard shortcut Ctrl+B toggles bold', async ({ page }) => {
     await setContent(page, '<p>text</p>');
     await selectText(page, 'p', 0, 4);
-    await page.keyboard.press('ControlOrMeta+b');
+    await page.keyboard.press(`${await shortcutKey(page)}+b`);
     expect(await getContent(page)).toBe('<p><strong>text</strong></p>');
   });
 

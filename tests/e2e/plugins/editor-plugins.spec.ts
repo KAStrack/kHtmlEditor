@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { openHarness, initEditor, getContent, setContent, setCaret, selectText, editorFrame } from '../helpers';
+import { openHarness, initEditor, getContent, setContent, setCaret, selectText, editorFrame, shortcutKey } from '../helpers';
 
 const dialog = (page: Page) => page.locator('.khe-dialog');
 const btn = (page: Page, name: string) => page.locator(`#editor_parent [data-khe-name="${name}"]`);
@@ -21,7 +21,7 @@ test.describe('editor-level plugins', () => {
     expect(Math.round(box!.width)).toBe(viewport.width);
     expect(Math.round(box!.height)).toBe(viewport.height);
     await expect(btn(page, 'fullscreen')).toHaveClass(/khe-tbtn--active/);
-    await page.keyboard.press('ControlOrMeta+Shift+F');
+    await page.keyboard.press(`${await shortcutKey(page)}+Shift+F`);
     await expect(page.locator('#editor_parent')).not.toHaveClass(/khe-fullscreen/);
     const after = await page.locator('#editor_parent').boundingBox();
     expect(Math.round(after!.height)).toBe(300);
@@ -80,7 +80,7 @@ test.describe('editor-level plugins', () => {
     await setCaret(page, 'p', 0);
     await page.keyboard.type('x');
     await expect(btn(page, 'save')).toBeEnabled();
-    await page.keyboard.press('ControlOrMeta+s');
+    await page.keyboard.press(`${await shortcutKey(page)}+s`);
     expect(await page.evaluate(() => (window as any).__saved)).toBe(1);
     expect(await page.evaluate(() => (document.getElementById('editor') as HTMLTextAreaElement).value)).toContain('xInitial');
     // Saving clears the dirty state, so cancel is disabled until the next edit.
@@ -149,7 +149,7 @@ test.describe('editor-level plugins', () => {
     await initEditor(page, { plugins: 'searchreplace', toolbar: 'searchreplace', menubar: false });
     await setContent(page, '<p>The cat sat on the mat with the Cat.</p><p>Another cat.</p>');
     await setCaret(page, 'p', 0);
-    await page.keyboard.press('ControlOrMeta+f');
+    await page.keyboard.press(`${await shortcutKey(page)}+f`);
     await expect(dialog(page).locator('.khe-dialog__title')).toHaveText('Find and Replace');
     await dialog(page).locator('input[name="findtext"]').fill('cat');
     await dialog(page).locator('input[name="findtext"]').press('Enter');
@@ -166,7 +166,7 @@ test.describe('editor-level plugins', () => {
     expect(await getContent(page)).toBe('<p>The dog sat on the mat with the dog.</p>\n<p>Another dog.</p>');
     // Match case and whole words, and the "not found" banner.
     await setContent(page, '<p>Cat concatenate cat</p>');
-    await page.keyboard.press('ControlOrMeta+f');
+    await page.keyboard.press(`${await shortcutKey(page)}+f`);
     await dialog(page).locator('input[name="findtext"]').fill('cat');
     await dialog(page).locator('input[name="matchcase"]').check();
     await dialog(page).locator('input[name="wholewords"]').check();

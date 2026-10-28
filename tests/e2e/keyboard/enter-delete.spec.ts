@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { openHarness, initEditor, getContent, setContent, setCaret, selectText, getBodyHtml } from '../helpers';
+import { openHarness, initEditor, getContent, setContent, setCaret, selectText, getBodyHtml, shortcutKey } from '../helpers';
 
 test.describe('Enter and Delete keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -168,11 +168,11 @@ test.describe('Enter and Delete keys', () => {
     await page.keyboard.press('Enter');
     await page.keyboard.type('ef');
     expect(await getContent(page)).toBe('<p>abcd</p>\n<p>ef</p>');
-    await page.keyboard.press('ControlOrMeta+z');
+    await page.keyboard.press(`${await shortcutKey(page)}+z`);
     expect(await getContent(page)).toBe('<p>abcd</p>\n<p>&nbsp;</p>');
-    await page.keyboard.press('ControlOrMeta+z');
+    await page.keyboard.press(`${await shortcutKey(page)}+z`);
     expect(await getContent(page)).toBe('<p>abcd</p>');
-    await page.keyboard.press('ControlOrMeta+z');
+    await page.keyboard.press(`${await shortcutKey(page)}+z`);
     expect(await getContent(page)).toBe('<p>a</p>');
   });
 

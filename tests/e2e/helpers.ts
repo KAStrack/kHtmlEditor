@@ -62,3 +62,11 @@ export const selectText = async (page: Page, selector: string, start: number, en
     { selector, start, end },
   );
 };
+
+/**
+ * The key the editor binds `meta` shortcuts to: Meta on Mac user agents (the Desktop Safari device
+ * emulates one even on a Linux host), Control elsewhere. Playwright's ControlOrMeta follows the
+ * host OS instead, so tests of editor shortcuts press this.
+ */
+export const shortcutKey = async (page: Page): Promise<'Meta' | 'Control'> =>
+  (await page.evaluate(() => (window as any).kHtmlEditor.Env.mac)) ? 'Meta' : 'Control';

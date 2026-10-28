@@ -218,6 +218,10 @@ export const createToolbar = (ctx: ButtonContext, groups: ToolbarGroupDef[], mod
     });
     ro.observe(el);
   }
+  // The observer's first callback waits for an animation frame, which can land after init; lay out
+  // once synchronously so the overflow is settled by the time the editor reports initialized.
+  const initialLayout = () => layout();
+  editor.on('init', initialLayout);
 
   // Close the floating overflow when clicking in the content.
   if (mode === 'floating') {
@@ -257,6 +261,7 @@ export const createToolbar = (ctx: ButtonContext, groups: ToolbarGroupDef[], mod
     refresh: layout,
     destroy: () => {
       ro?.disconnect();
+      editor.off('init', initialLayout);
       components.forEach((c) => c.destroy());
     },
   };

@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { openHarness, initEditor, getContent, setContent, setCaret, selectText, editorFrame } from '../helpers';
+import { openHarness, initEditor, getContent, setContent, setCaret, selectText, editorFrame, shortcutKey } from '../helpers';
 
 const dialog = (page: Page) => page.locator('.khe-dialog');
 const save = (page: Page) => dialog(page).locator('.khe-button--primary').click();
@@ -18,7 +18,7 @@ test.describe('link plugin', () => {
     await initEditor(page, { plugins: 'link', toolbar: 'link unlink openlink', menubar: false, convert_urls: false });
     await setContent(page, '<p>hello world</p>');
     await selectText(page, 'p', 0, 5);
-    await page.keyboard.press('ControlOrMeta+k');
+    await page.keyboard.press(`${await shortcutKey(page)}+k`);
     await expect(dialog(page)).toBeVisible();
     await expect(dialog(page).locator('.khe-dialog__title')).toHaveText('Insert/Edit Link');
     await expect(dialog(page).locator('input[name="text"]')).toHaveValue('hello');
