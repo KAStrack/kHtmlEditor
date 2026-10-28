@@ -44,7 +44,7 @@ if (watch) {
     cpSync(skins, resolve(root, 'dist/skins'), { recursive: true });
   }
   const size = statSync(resolve(root, 'dist/khtmleditor.min.js')).size;
-  const budget = 400 * 1024;
+  const budget = 700 * 1024;
   console.log(`dist/khtmleditor.min.js: ${(size / 1024).toFixed(1)} KB (budget ${(budget / 1024).toFixed(0)} KB)`);
   if (size > budget) {
     console.error('Bundle exceeds size budget');

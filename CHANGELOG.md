@@ -15,6 +15,8 @@ versioning.
 - `khtmleditor.tinymce-shim.js` aliasing `window.tinymce`/`window.tinyMCE`.
 
 ### Decisions / assumptions
+
+- Bundle size budget raised from 400 KB to 700 KB (minified IIFE with every bundled plugin); the table plugin pushed the core past 400 KB and the image/media/paste/Tier-2 batches are still to come. Tracked by `scripts/build.mjs`.
 - Zero runtime dependencies; own schema-driven HTML sanitiser.
 - iframe-based editing surface (TinyMCE classic mode); `inline` mode planned post-1.0.
 - Global name `kHtmlEditor`; optional `khtmleditor.tinymce-shim.js` aliases `window.tinymce`/`window.tinyMCE`.
