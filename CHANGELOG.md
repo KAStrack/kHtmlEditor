@@ -14,6 +14,10 @@ versioning.
   (153 tests each). Tests of editor shortcuts press the modifier the editor binds (`Meta` on Mac
   user agents such as Playwright's Desktop Safari device) instead of `ControlOrMeta`, which follows
   the host OS.
+- `docs/dist/`, the bundle the GitHub Pages demo and examples load, was matched by the `dist/`
+  ignore rule and never committed, so the published site would have had no editor. The rule now
+  matches only the root `dist/`, and `npm run sync-docs` copies just the files the site loads
+  (minified bundle, TinyMCE shim and skin stylesheets).
 
 ## [1.0.0] - 2026-10-28
 

@@ -1,0 +1,2 @@
+"use strict";(()=>{(()=>{let i=window;if(!i.kHtmlEditor){console.error("kHtmlEditor TinyMCE shim: load khtmleditor.js before the shim.");return}if(i.tinymce&&!i.tinymce.isKHtmlEditor){console.warn("kHtmlEditor TinyMCE shim: a real TinyMCE global is already present; not overriding it.");return}i.tinymce=i.kHtmlEditor,i.tinyMCE=i.kHtmlEditor})();})();
+//# sourceMappingURL=khtmleditor.tinymce-shim.js.map
