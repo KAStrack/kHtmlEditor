@@ -102,4 +102,22 @@ export const normalizeAfterInput = (editor: Editor): void => {
   fixBogusBrs(editor, block);
   removeEmptyInlines(editor, block);
   removeBrowserStyleSpans(editor, block);
+  normalizeNbsps(editor, rng);
+};
+
+/** A non-breaking space between two visible characters is a regular space (TinyMCE behaviour). */
+const normalizeNbsps = (editor: Editor, rng: Range): void => {
+  const node = rng.startContainer;
+  if (!NodeType.isText(node) || node.data.indexOf('\u00a0') === -1) {
+    return;
+  }
+  const replaced = node.data.replace(/(\S)\u00a0(?=\S)/g, (_m, before: string) => before + ' ');
+  if (replaced !== node.data) {
+    const offset = rng.startOffset;
+    node.data = replaced;
+    const r = editor.dom.createRng();
+    r.setStart(node, Math.min(offset, node.data.length));
+    r.collapse(true);
+    editor.selection.setRng(r);
+  }
 };

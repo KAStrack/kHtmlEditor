@@ -71,12 +71,24 @@ export const createEditorParser = (editor: Editor): DomParser => {
     }
   });
 
-  // Empty blocks in the editor get a bogus br so the caret can be placed in them.
-  parser.addNodeFilter('p,h1,h2,h3,h4,h5,h6,div', (nodes) => {
+  // Empty blocks in the editor get a bogus br so the caret can be placed in them. A block holding
+  // only the padding nbsp produced by the parser is treated the same, so typing into it does not
+  // leave a stray trailing &nbsp;.
+  parser.addNodeFilter('p,h1,h2,h3,h4,h5,h6,div,li,td,th,pre,blockquote,address', (nodes, _name, args) => {
+    if (args.get) {
+      return;
+    }
     const nonEmptyElements = editor.schema.getNonEmptyElements();
     for (const node of nodes) {
-      if (isEmptyNode(editor.schema, node, nonEmptyElements) && node.getElementsByTagName('br').length === 0) {
-        node.appendChild(node.ownerDocument.createElement('br'));
+      const only = node.childNodes.length === 1 ? node.firstChild : null;
+      const isPaddingNbsp = !!only && only.nodeType === 3 && (only as Text).data === '\u00a0';
+      if (isPaddingNbsp || (isEmptyNode(editor.schema, node, nonEmptyElements) && node.getElementsByTagName('br').length === 0)) {
+        while (node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+        const br = node.ownerDocument.createElement('br');
+        br.setAttribute('data-mce-bogus', '1');
+        node.appendChild(br);
       }
     }
   });

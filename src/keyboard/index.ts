@@ -4,6 +4,9 @@ import { insertNewLine, insertBr } from './EnterKey';
 import { handleDelete, afterDelete } from './DeleteKey';
 import { normalizeAfterInput } from './Normalizer';
 import { Delay } from '../util/Delay';
+import { setupTextPatterns } from './TextPatterns';
+import { setupInlineBoundaries } from './InlineBoundaries';
+import { setupObjectSelection } from './ObjectSelection';
 
 /** Wires the structural key handlers into the input controller and registers related commands. */
 
@@ -76,6 +79,9 @@ const registerHandlers = (): void => {
   });
 
   registerSetupHook((editor) => {
+    setupTextPatterns(editor);
+    setupInlineBoundaries(editor);
+    setupObjectSelection(editor);
     editor.addShortcut('meta+z', 'Undo', 'Undo');
     editor.addShortcut('meta+y,meta+shift+z', 'Redo', 'Redo');
     editor.on('input', (e) => {
