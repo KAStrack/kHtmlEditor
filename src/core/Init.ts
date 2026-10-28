@@ -15,6 +15,7 @@ import * as Options from './EditorOptions';
 import { describeRemovedPlugin } from '../compat/legacyOptions';
 import { createBlobCache } from '../content/BlobCache';
 import { registerCoreCommands } from '../commands/Commands';
+import { registerFormatCommands } from '../commands/FormatCommands';
 import { setupKeyboard } from '../keyboard/index';
 import { isFunction, isString } from '../util/Type';
 
@@ -335,6 +336,7 @@ const initContentBody = (editor: Editor): void => {
   editor._nodeChangeDispatcher = new NodeChange(editor);
   editor.editorUpload = createEditorUpload(editor);
   registerCoreCommands(editor);
+  registerFormatCommands(editor);
   setupKeyboard(editor);
 
   body.contentEditable = String(editor.hasEditableRoot() && !editor.readonly);

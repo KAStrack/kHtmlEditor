@@ -11,7 +11,8 @@ export const ensureRootBlock = (editor: Editor): boolean => {
   const dom = editor.dom;
   let hasContent = false;
   for (let c = body.firstChild; c; c = c.nextSibling) {
-    if (NodeType.isElement(c) && !(NodeType.isBr(c) && NodeType.isBogus(c))) {
+    // Browsers (Firefox) pad an emptied body with a bare <br>; that is not content.
+    if (NodeType.isElement(c) && !NodeType.isBr(c)) {
       hasContent = true;
       break;
     }

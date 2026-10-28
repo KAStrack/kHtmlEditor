@@ -883,8 +883,8 @@ const trimNode = <T extends Node>(dom: DOMUtils, node: T, schema: Schema, root?:
     return node;
   }
   if (NodeType.isElement(node) && !NodeType.isInternal(node) && !schema.getNonEmptyElements()[node.nodeName.toLowerCase()]) {
-    const name = node.nodeName.toLowerCase();
-    if (!schema.isBlock(name) && isEmptyDom(schema, node) && !node.hasAttribute('name') && !node.hasAttribute('id') && !node.hasAttribute('data-mce-bookmark') && node !== rootNode) {
+    // Empty elements (blocks included) left over from a split are dropped; the root itself never is.
+    if (isEmptyDom(schema, node) && !node.querySelector('br') && !node.hasAttribute('name') && !node.hasAttribute('id') && !node.hasAttribute('data-mce-bookmark') && node !== rootNode) {
       dom.remove(node);
     }
   } else if (NodeType.isText(node) && node.data.length === 0 && node !== rootNode) {
