@@ -158,10 +158,10 @@ const findBlockEndPoint = (editor: Editor, formatList: Format[], container: Node
   const root = dom.getRoot();
   const format = formatList[0];
 
-  if (!format.wrapper && FormatUtils.isBlockFormat(format)) {
-    node = dom.getParent(container, format.block, root);
-  } else {
-    node = null;
+  // Only block formats look for an enclosing block; selector formats keep the container itself
+  // (TinyMCE behaviour), so aligning a selected image styles the image, not its paragraph.
+  if (FormatUtils.isBlockFormat(format)) {
+    node = format.wrapper ? null : dom.getParent(container, format.block, root);
   }
   if (!node) {
     const scopeRoot = dom.getParent(container, 'LI,TD,TH') ?? root;

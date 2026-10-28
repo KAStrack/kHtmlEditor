@@ -172,7 +172,8 @@ export const applyFormatInternal = (ed: Editor, name: string, vars?: FormatVars,
 
         if (FormatUtils.isSelectorFormat(format)) {
           let found = applyNodeStyle(formatList, n);
-          if (!found && parentNode && !FormatUtils.isCaretNode(parentNode)) {
+          // Include the parent for expanded (non-inline) selector formats, e.g. aligning text styles its block.
+          if (!found && parentNode && !FormatUtils.isCaretNode(parentNode) && format.expand !== false && !FormatUtils.isInlineFormat(format)) {
             found = applyNodeStyle(formatList, parentNode);
           }
           if (!FormatUtils.isInlineFormat(format) || found) {

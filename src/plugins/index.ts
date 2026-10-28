@@ -7,3 +7,4 @@ import './media/Plugin';
 import './link/Plugin';
 import './autolink/Plugin';
 import './code/Plugin';
+import './quickbars/Plugin';

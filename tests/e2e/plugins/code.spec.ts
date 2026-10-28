@@ -37,7 +37,7 @@ test.describe('code plugin', () => {
     await expect(ta).toBeVisible();
     await expect(ta).toHaveValue('<p>Hello</p>');
     await expect(page.locator('#editor_ifr')).toBeHidden();
-    await expect(page.locator('#editor_parent .khe-container')).toHaveClass(/khe-source-mode/);
+    await expect(page.locator('#editor_parent')).toHaveClass(/khe-source-mode/);
     await expect(button).toHaveClass(/khe-tbtn--active/);
     expect(await page.evaluate(() => (window as any).kHtmlEditor.activeEditor.queryCommandState('mceToggleSourceView'))).toBe(true);
     await ta.fill('<p>Edited <em>source</em></p><p>Two</p>');
@@ -46,7 +46,7 @@ test.describe('code plugin', () => {
     await button.click();
     await expect(ta).toHaveCount(0);
     await expect(page.locator('#editor_ifr')).toBeVisible();
-    await expect(page.locator('#editor_parent .khe-container')).not.toHaveClass(/khe-source-mode/);
+    await expect(page.locator('#editor_parent')).not.toHaveClass(/khe-source-mode/);
     expect(await getContent(page)).toBe('<p>Edited <em>source</em></p>\n<p>Two</p>');
     await expect(editorFrame(page).locator('em')).toHaveText('source');
   });

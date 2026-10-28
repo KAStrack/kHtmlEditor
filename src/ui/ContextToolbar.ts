@@ -35,7 +35,9 @@ export const setupContextToolbars = (editor: Editor, themeRoot: HTMLElement): { 
       return null;
     }
     const body = editor.getBody();
-    const start = editor.selection.getStart();
+    // Like TinyMCE, the lookup starts at the selection's node (the selected element or the closest
+    // element containing the range), so an empty block is reported as the block, not its padding br.
+    const start = editor.selection.getNode();
     // Node-scoped toolbars check the node and its ancestors (closest wins); editor-scoped check only the start node.
     let node: Node | null = start;
     let depth = 0;
