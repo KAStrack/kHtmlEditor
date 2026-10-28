@@ -1,7 +1,7 @@
 {
   "name": "khtmleditor",
   "version": "0.1.0",
-  "description": "kHtmlEditor — a from-scratch, dependency-free rich text HTML editor that is a drop-in replacement for TinyMCE.",
+  "description": "kHtmlEditor \u2014 a from-scratch, dependency-free rich text HTML editor that is a drop-in replacement for TinyMCE.",
   "license": "MIT",
   "type": "module",
   "main": "dist/khtmleditor.esm.js",
@@ -20,11 +20,6 @@
     "dist",
     "README.md",
     "LICENSE"
-  ],
-  "sideEffects": [
-    "./dist/khtmleditor.js",
-    "./dist/khtmleditor.min.js",
-    "./dist/khtmleditor.tinymce-shim.js"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
