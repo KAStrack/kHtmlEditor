@@ -44,7 +44,7 @@ const normalizeAttrName = (name: string): string => name.toLowerCase().replace(a
 
 const isEventHandler = (name: string): boolean => /^on/i.test(normalizeAttrName(name));
 
-/** Property names on window/document/forms that `id`/`name` values must not shadow. */
+/** Property names on document/forms that `id`/`name` values must not shadow. */
 const protectedNames = (): Set<string> => {
   if (cachedProtected) {
     return cachedProtected;
@@ -63,11 +63,11 @@ const protectedNames = (): Set<string> => {
       cur = Object.getPrototypeOf(cur);
     }
   };
+  // Like DOMPurify's SANITIZE_DOM: names that would shadow document or form properties. Window
+  // properties are not included (built-ins such as `top`, `name` or `parent` are unforgeable and
+  // ids like "top" are common in real content).
   if (typeof document !== 'undefined') {
     collect(document);
-  }
-  if (typeof window !== 'undefined') {
-    collect(window);
   }
   if (typeof HTMLFormElement !== 'undefined') {
     collect(HTMLFormElement.prototype);

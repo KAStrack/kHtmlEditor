@@ -1310,3 +1310,34 @@
     animation: none;
   }
 }
+
+/* Code plugin: inline source view */
+.khe-source-view {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 150px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  outline: none;
+  resize: none;
+  display: block;
+  background: var(--khe-content-bg, #fff);
+  color: var(--khe-text, #222f3e);
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre;
+  tab-size: 2;
+}
+.khe-source-mode .khe-toolbar .khe-tbtn:not([data-khe-name='code']),
+.khe-source-mode .khe-toolbar .khe-tgroup > :not([data-khe-name='code']),
+.khe-source-mode .khe-menubar,
+.khe-source-mode .khe-statusbar .khe-statusbar__path {
+  pointer-events: none;
+  opacity: 0.4;
+}
+.khe-dialog .khe-source-textarea,
+.khe-dialog textarea.khe-source-textarea {
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  min-height: 50vh;
+  white-space: pre;
+}

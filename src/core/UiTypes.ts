@@ -183,7 +183,7 @@ export interface UiRegistry {
   addToggleMenuItem: (name: string, spec: ToggleMenuItemSpec) => void;
   addContextMenu: (name: string, spec: ContextMenuSpec) => void;
   addContextToolbar: (name: string, spec: ContextToolbarSpec) => void;
-  addContextForm: (name: string, spec: ContextFormSpec) => void;
+  addContextForm: (name: string, spec: Omit<ContextFormSpec, 'type'> & { type?: 'contextform' }) => void;
   addIcon: (name: string, svgData: string) => void;
   addSidebar: (name: string, spec: SidebarSpec) => void;
   addView: (name: string, spec: ViewSpec) => void;

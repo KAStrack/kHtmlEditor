@@ -76,7 +76,36 @@ export const renderToolbarItems = (ctx: ButtonContext, items: string[] | string,
     if (name === '|') {
       continue;
     }
-    const spec = registry[name.toLowerCase()];
+    let spec = registry[name.toLowerCase()];
+    if (!spec) {
+      // A context form with a launch button can be placed on a toolbar (e.g. quicklink).
+      const form = editor.ui.registry.getAll().contextToolbars[name.toLowerCase()] as any;
+      if (form && form.type === 'contextform' && form.launch) {
+        const launch = form.launch;
+        const toggle = launch.type === 'contextformtogglebutton';
+        spec = {
+          type: toggle ? 'togglebutton' : 'button',
+          icon: launch.icon,
+          text: launch.text,
+          tooltip: launch.tooltip,
+          onAction: () => editor.dispatch('ContextFormLaunch', { name: name.toLowerCase() }),
+          onSetup: toggle
+            ? (api: any) => {
+                const update = () => {
+                  try {
+                    api.setActive(!!form.predicate(editor.selection.getStart()));
+                  } catch {
+                    api.setActive(false);
+                  }
+                };
+                editor.on('NodeChange', update);
+                update();
+                return () => editor.off('NodeChange', update);
+              }
+            : undefined,
+        } as any;
+      }
+    }
     if (!spec) {
       if (!warned.has(name)) {
         warned.add(name);

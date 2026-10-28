@@ -17,6 +17,8 @@ export const setupContextToolbars = (editor: Editor, themeRoot: HTMLElement): { 
   let components: Component[] = [];
   let currentKey = '';
   let suppressed = false;
+  // A form opened from a toolbar launch button stays open until hidden, regardless of predicates.
+  let pinned = false;
 
   const close = () => {
     if (popup) {
@@ -116,6 +118,7 @@ export const setupContextToolbars = (editor: Editor, themeRoot: HTMLElement): { 
         components = [];
         popup = null;
         currentKey = '';
+        pinned = false;
       },
     });
     (popup as any).__node = match.node;
@@ -130,6 +133,10 @@ export const setupContextToolbars = (editor: Editor, themeRoot: HTMLElement): { 
       close();
       return;
     }
+    if (pinned && popup) {
+      popup.reposition();
+      return;
+    }
     const match = findMatch();
     if (match) {
       show(match);
@@ -139,6 +146,15 @@ export const setupContextToolbars = (editor: Editor, themeRoot: HTMLElement): { 
   });
 
   editor.on('NodeChange SelectionChange ResizeEditor ScrollContent', () => update.throttle());
+  editor.on('ContextFormLaunch', (e: { name: string }) => {
+    const spec = toolbars()[e.name] as ContextFormSpec | undefined;
+    if (!spec || spec.type !== 'contextform') {
+      return;
+    }
+    close();
+    pinned = true;
+    show({ name: e.name, spec: { ...spec, position: 'selection' }, node: editor.selection.getStart() as HTMLElement });
+  });
   editor.on('blur', () => {
     setTimeout(() => {
       if (!(popup && popup.el.contains(document.activeElement))) {
