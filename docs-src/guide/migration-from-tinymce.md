@@ -49,8 +49,8 @@ TinyMCE 4/5 option and button names are mapped to their 6/7 equivalents with a c
 ## Differences to know about
 
 - There is no cloud, licence key or `promotion` banner. `license_key`, `promotion`, `branding` (default on, points at this project) and `cloud_*` options are accepted and ignored where meaningless.
-- `inline: true` is not available in 1.0 (planned). Every editor renders in an iframe.
-- Premium plugins (comments, AI, PowerPaste, spell checker, export, mentions, etc.) are not available. `accordion` is not included in 1.0.
+- `inline: true` is not available yet (planned). Every editor renders in an iframe.
+- Premium plugins (comments, AI, PowerPaste, spell checker, export, mentions, etc.) are not available. `accordion` is not included yet.
 - `kHtmlEditor.majorVersion` reports `'7'` (the API emulated); the real version is `kHtmlEditor.version`.
 - `code_view: 'inline'` is an extension: the source code button can swap the editing area for a textarea instead of opening a dialog.
 - Video and audio file uploads are an extension: `media_upload_url` / `media_upload_handler` (falling back to the image options).

@@ -6,20 +6,9 @@ versioning.
 
 ## [Unreleased]
 
-### Fixed
-- Sliding and floating toolbars lay out their overflow once synchronously on `init`, so every
-  button is in its final place when the editor reports `initialized`. Previously the first layout
-  waited for a ResizeObserver animation frame, which headless WebKit runs after init.
-- WebKit now runs locally and the full e2e and compat suite passes on Chromium, Firefox and WebKit
-  (153 tests each). Tests of editor shortcuts press the modifier the editor binds (`Meta` on Mac
-  user agents such as Playwright's Desktop Safari device) instead of `ControlOrMeta`, which follows
-  the host OS.
-- `docs/dist/`, the bundle the GitHub Pages demo and examples load, was matched by the `dist/`
-  ignore rule and never committed, so the published site would have had no editor. The rule now
-  matches only the root `dist/`, and `npm run sync-docs` copies just the files the site loads
-  (minified bundle, TinyMCE shim and skin stylesheets).
+(nothing yet)
 
-## [1.0.0] - 2026-10-28
+## [0.1.0] - 2026-10-28
 
 First release. kHtmlEditor is a from-scratch, dependency-free rich text editor that is a drop-in
 replacement for TinyMCE 6/7 (open-source feature set).
@@ -61,16 +50,11 @@ replacement for TinyMCE 6/7 (open-source feature set).
 - `inline: true` editing mode (planned for a later release).
 - The `accordion` plugin and all TinyMCE premium features.
 
-### Known issues
-- WebKit (Safari) is covered by the Playwright configuration but was not run in the release
-  environment (missing system libraries); Chromium and Firefox pass the full suite.
-
-
 ### Decisions / assumptions
 
 - Bundle size budget raised from 400 KB to 700 KB (minified IIFE with every bundled plugin); the table plugin pushed the core past 400 KB and the image/media/paste/Tier-2 batches are still to come. Tracked by `scripts/build.mjs`.
 - Zero runtime dependencies; own schema-driven HTML sanitiser.
-- iframe-based editing surface (TinyMCE classic mode); `inline` mode planned post-1.0.
+- iframe-based editing surface (TinyMCE classic mode); `inline` mode planned for a later release.
 - Global name `kHtmlEditor`; optional `khtmleditor.tinymce-shim.js` aliases `window.tinymce`/`window.tinyMCE`.
 - Internal marker attributes use TinyMCE's `data-mce-*` names and the content body carries the
   `mce-content-body` class so existing content CSS and plugin code keep matching (the plan said `data-k-*`).

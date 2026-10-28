@@ -41,7 +41,7 @@ Target: the TinyMCE 6 and 7/8 open-source API (option names are identical betwee
 | codesample | ✅ | Highlights with a page-provided `Prism` only; output is plain `pre.language-*` |
 | media | ✅ + upload | Extra `media_upload_url` / `media_upload_handler` / upload tab |
 | code | ✅ + inline | Extra `code_view: 'inline'` |
-| accordion | ❌ | Not in 1.0 |
+| accordion | ❌ | Not included yet |
 | paste, textcolor, colorpicker, contextmenu, hr, textpattern, print, noneditable | ⚠️ accepted | Core functionality; the plugin name is ignored |
 | spellchecker, imagetools, toc, template, fullpage, tabfocus, legacyoutput, bbcode | ⚠️ warned | Not available; ignored |
 

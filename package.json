@@ -1,6 +1,6 @@
 {
   "name": "khtmleditor",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "kHtmlEditor \u2014 a from-scratch, dependency-free rich text HTML editor that is a drop-in replacement for TinyMCE.",
   "license": "MIT",
   "type": "module",
