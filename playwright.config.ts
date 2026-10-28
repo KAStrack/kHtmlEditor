@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: 'tests/e2e',
   timeout: 30000,
   fullyParallel: true,
+  workers: 6,
   retries: 0,
   reporter: [['list']],
   use: {

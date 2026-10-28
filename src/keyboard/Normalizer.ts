@@ -111,7 +111,14 @@ const normalizeNbsps = (editor: Editor, rng: Range): void => {
   if (!NodeType.isText(node) || node.data.indexOf('\u00a0') === -1) {
     return;
   }
-  const replaced = node.data.replace(/(\S)\u00a0(?=\S)/g, (_m, before: string) => before + ' ');
+  let replaced = node.data.replace(/(\S)\u00a0(?=\S)/g, (_m, before: string) => before + ' ');
+  // An nbsp at the start of a text node that follows visible inline content (e.g. </strong>) and is
+  // itself followed by text behaves like a middle space too.
+  const prev = node.previousSibling;
+  const prevHasContent = !!prev && (NodeType.isElement(prev) ? !NodeType.isBr(prev) && (prev.textContent || '').replace(/\uFEFF/g, '').length > 0 && !/\s$/.test(prev.textContent || '') : NodeType.isText(prev) && /\S$/.test(prev.data));
+  if (prevHasContent) {
+    replaced = replaced.replace(/^(\uFEFF*)\u00a0(?=\S)/, '$1 ');
+  }
   if (replaced !== node.data) {
     const offset = rng.startOffset;
     node.data = replaced;
