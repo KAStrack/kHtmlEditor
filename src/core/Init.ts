@@ -16,6 +16,7 @@ import { describeRemovedPlugin } from '../compat/legacyOptions';
 import { createBlobCache } from '../content/BlobCache';
 import { registerCoreCommands } from '../commands/Commands';
 import { registerFormatCommands } from '../commands/FormatCommands';
+import { setupControlSelection } from '../selection/ControlSelection';
 import { setupKeyboard } from '../keyboard/index';
 import { isFunction, isString } from '../util/Type';
 
@@ -338,6 +339,7 @@ const initContentBody = (editor: Editor): void => {
   registerCoreCommands(editor);
   registerFormatCommands(editor);
   setupKeyboard(editor);
+  setupControlSelection(editor);
 
   body.contentEditable = String(editor.hasEditableRoot() && !editor.readonly);
   if (!Options.shouldBrowserSpellcheck(editor)) {
@@ -397,7 +399,9 @@ const initContentBody = (editor: Editor): void => {
 
 const createEditorUpload = (editor: Editor): Editor['editorUpload'] => {
   const blobCache = createBlobCache();
-  let impl: Editor['editorUpload'] | null = null;
+  // The content layer registers the real implementation at module load; create it now so its
+  // SetContent hooks and serializer filters are active from the first content set.
+  let impl: Editor['editorUpload'] | null = uploadFactory ? uploadFactory(editor, blobCache) : null;
   const getImpl = () => {
     if (!impl && uploadFactory) {
       impl = uploadFactory(editor, blobCache);

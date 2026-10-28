@@ -40,7 +40,7 @@ export const getContent = (editor: Editor, args: GetContentArgs = {}): any => {
   const updatedArgs = args.no_events ? defaultedArgs : editor.dispatch('BeforeGetContent', defaultedArgs);
   let content: any;
   if (updatedArgs.format === 'raw') {
-    content = NodeType.removeZwsp(body.innerHTML);
+    content = NodeType.removeZwsp(trimBogusAll(body));
   } else if (updatedArgs.format === 'text') {
     content = NodeType.removeZwsp(getTextContent(body));
   } else if (updatedArgs.format === 'tree') {
@@ -57,6 +57,16 @@ export const getContent = (editor: Editor, args: GetContentArgs = {}): any => {
   }
   const evt = editor.dispatch('GetContent', result);
   return evt.content;
+};
+
+/** Raw HTML of the body without `data-mce-bogus="all"` elements (resize handles, ghosts, caret blocks). */
+const trimBogusAll = (body: HTMLElement): string => {
+  if (!body.querySelector('[data-mce-bogus="all"]')) {
+    return body.innerHTML;
+  }
+  const clone = body.cloneNode(true) as HTMLElement;
+  clone.querySelectorAll('[data-mce-bogus="all"]').forEach((el) => el.remove());
+  return clone.innerHTML;
 };
 
 const getTextContent = (body: HTMLElement): string => {

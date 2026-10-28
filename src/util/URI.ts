@@ -348,6 +348,10 @@ const isSafeScheme = (decoded: string, context: string | undefined, options: Saf
         // Raster images are allowed on src-like attributes only.
         return context === undefined || context !== 'a';
       }
+      if (/^(video|audio)\/[a-z0-9.+-]+$/.test(mime)) {
+        // Media data URIs only on media elements (pasted/dropped files awaiting upload).
+        return context === 'video' || context === 'audio' || context === 'source';
+      }
       return !!options.allow_html_data_urls;
     }
   }

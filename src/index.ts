@@ -1,5 +1,6 @@
 import { EditorManager } from './core/EditorManager';
 import './ui/index';
+import './content/EditorUpload';
 import './plugins/index';
 
 export { Editor } from './core/Editor';
