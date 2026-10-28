@@ -737,7 +737,7 @@ export class DOMUtils {
     return func.call(context, elm);
   }
 
-  isEmpty(node: Node, elements?: Record<string, {}>, options?: { skipBogus?: boolean; includeZwsp?: boolean; checkRootAsContent?: boolean; isContent?: (n: Node) => boolean }): boolean {
+  isEmpty(node: Node, elements?: Record<string, {}>, options?: EmptyOptions): boolean {
     return isEmptyDom(this.schema, node, elements, options);
   }
 
@@ -897,14 +897,19 @@ const trimNode = <T extends Node>(dom: DOMUtils, node: T, schema: Schema, root?:
  * DOM level emptiness check (port of TinyMCE's Empty.isEmpty): `<p><br></p>` is empty, named
  * anchors/bookmarks/non-empty elements are content, nbsp is content.
  */
-export const isEmptyDom = (
-  schema: Schema,
-  targetNode: Node,
-  elements?: Record<string, {}>,
-  options: { skipBogus?: boolean; includeZwsp?: boolean; checkRootAsContent?: boolean; isContent?: (n: Node) => boolean } = {},
-): boolean => {
+export interface EmptyOptions {
+  skipBogus?: boolean;
+  includeZwsp?: boolean;
+  /** Treat non-breaking spaces as whitespace (a block holding only `&nbsp;` is empty). */
+  includeNbsp?: boolean;
+  checkRootAsContent?: boolean;
+  isContent?: (n: Node) => boolean;
+}
+
+export const isEmptyDom = (schema: Schema, targetNode: Node, elements?: Record<string, {}>, options: EmptyOptions = {}): boolean => {
   const skipBogus = options.skipBogus !== false;
   const includeZwsp = !!options.includeZwsp;
+  const includeNbsp = !!options.includeNbsp;
   const nonEmpty = elements ?? schema.getNonEmptyElements();
   const whitespace = schema.getWhitespaceElements();
 
@@ -923,7 +928,10 @@ export const isEmptyDom = (
       return false;
     }
     if (NodeType.isText(node)) {
-      const text = includeZwsp ? node.data : NodeType.removeZwsp(node.data);
+      let text = includeZwsp ? node.data : NodeType.removeZwsp(node.data);
+      if (includeNbsp) {
+        text = text.replace(/\u00a0/g, ' ');
+      }
       if (!NodeType.isWhitespaceText(text)) {
         return true;
       }

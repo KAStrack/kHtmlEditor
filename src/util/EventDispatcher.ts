@@ -33,7 +33,9 @@ interface Binding {
 /** Properties that must not be copied from native events (deprecated or clashing). */
 const nativeSkip = new Set(['keyLocation', 'layerX', 'layerY', 'returnValue', 'webkitMovementX', 'webkitMovementY', 'keyIdentifier', 'mozPressure', 'cancelBubble', 'srcElement']);
 
-const isNativeEvent = (e: unknown): e is Event => typeof Event !== 'undefined' && e instanceof Event;
+/** Duck-typed: events from an iframe are not `instanceof` the host window's Event. */
+const isNativeEvent = (e: unknown): e is Event =>
+  !!e && typeof e === 'object' && typeof (e as Event).type === 'string' && typeof (e as Event).preventDefault === 'function' && typeof (e as Event).stopPropagation === 'function' && 'defaultPrevented' in (e as Event) && 'timeStamp' in (e as Event);
 
 /** Builds the editor event object. Native events are copied so that listeners can mutate properties safely. */
 export const normalize = <T extends object>(type: string, args: T | undefined, target: any): EditorEvent<T> => {
@@ -218,6 +220,11 @@ export class EventDispatcher<T extends NativeEventMap = NativeEventMap> {
   has(name: string): boolean {
     const handlers = this.bindings[name.toLowerCase()];
     return !!handlers && handlers.length > 0;
+  }
+
+  /** Names of all events that currently have listeners. */
+  getBoundNames(): string[] {
+    return Object.keys(this.bindings).filter((n) => this.bindings[n].length > 0);
   }
 }
 

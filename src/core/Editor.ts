@@ -132,6 +132,7 @@ export class Editor extends Observable {
       console.warn('kHtmlEditor: inline mode is not supported yet; using the classic iframe mode.');
     }
     this.convertURL = this.convertURL.bind(this);
+    this._nativeEvents = setupNativeEvents(this);
     EditorOptions.registerOptions(this);
     this.readonly = this.options.get('readonly');
     this.suffix = editorManager.suffix;
@@ -145,7 +146,6 @@ export class Editor extends Observable {
     this.notificationManager = createNotificationManager(this);
     this.editorCommands = new EditorCommands(this);
     this.shortcuts = new Shortcuts(this);
-    this._nativeEvents = setupNativeEvents(this);
     EditorFocus.setupFocusEvents(this);
     this.editableRoot = this.options.get('editable_root');
     const setup = EditorOptions.getSetupCallback(this);

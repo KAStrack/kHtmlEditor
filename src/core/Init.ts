@@ -15,7 +15,7 @@ import * as Options from './EditorOptions';
 import { describeRemovedPlugin } from '../compat/legacyOptions';
 import { createBlobCache } from '../content/BlobCache';
 import { registerCoreCommands } from '../commands/Commands';
-import { setupKeyboard } from '../keyboard/InputController';
+import { setupKeyboard } from '../keyboard/index';
 import { isFunction, isString } from '../util/Type';
 
 /**

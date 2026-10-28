@@ -73,6 +73,15 @@ export const setupNativeEvents = (editor: Editor): { bindPending: () => void; un
   return {
     bindPending: () => {
       bound = true;
+      // Listeners registered before this bridge existed (e.g. in the constructor) are bound now too.
+      const dispatcher = editor._eventDispatcher;
+      if (dispatcher) {
+        for (const name of dispatcher.getBoundNames()) {
+          if (EventDispatcher.isNative(name) && name !== 'focus' && name !== 'blur') {
+            pending[name] = true;
+          }
+        }
+      }
       for (const name of Object.keys(pending)) {
         bindEvent(name);
       }
