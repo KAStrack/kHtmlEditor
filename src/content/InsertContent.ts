@@ -98,6 +98,74 @@ const insertListIntoList = (editor: Editor, frag: DocumentFragment, rng: Range):
   return ref;
 };
 
+/** Character directly before/after the caret within its block, or null at the block edge. */
+const charAround = (editor: Editor, rng: Range, before: boolean): string | null => {
+  const block = editor.dom.getParent(rng.startContainer, (n) => NodeType.isElement(n) && editor.dom.isBlock(n), editor.getBody()) ?? editor.getBody();
+  const container = before ? rng.startContainer : rng.endContainer;
+  const offset = before ? rng.startOffset : rng.endOffset;
+  if (NodeType.isText(container)) {
+    if (before && offset > 0) {
+      return container.data.charAt(offset - 1);
+    }
+    if (!before && offset < container.data.length) {
+      return container.data.charAt(offset);
+    }
+  }
+  const walker = editor.getDoc().createTreeWalker(block, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  walker.currentNode = NodeType.isText(container) ? container : container.childNodes[before ? Math.max(0, offset - 1) : offset] ?? container;
+  let node: Node | null = walker.currentNode;
+  // When the caret container is an element, start from the neighbouring child.
+  if (!NodeType.isText(container)) {
+    const child = container.childNodes[before ? offset - 1 : offset];
+    if (!child) {
+      node = before ? walker.previousNode() : walker.nextNode();
+    } else {
+      walker.currentNode = child;
+      node = child;
+      if (NodeType.isText(child)) {
+        return before ? child.data.charAt(child.data.length - 1) || null : child.data.charAt(0) || null;
+      }
+      if (NodeType.isBr(child) || editor.dom.isBlock(child)) {
+        return null;
+      }
+    }
+  }
+  while (node) {
+    node = before ? walker.previousNode() : walker.nextNode();
+    if (!node) {
+      return null;
+    }
+    if (NodeType.isBr(node) || (NodeType.isElement(node) && editor.dom.isBlock(node))) {
+      return null;
+    }
+    if (NodeType.isText(node) && node.data.length) {
+      return before ? node.data.charAt(node.data.length - 1) : node.data.charAt(0);
+    }
+  }
+  return null;
+};
+
+/**
+ * The parser collapses leading/trailing spaces of inserted content; put them back as a space, or
+ * as a non-breaking space where a plain one would collapse (TinyMCE trimOrPadLeftRight).
+ */
+const restoreEdgeSpaces = (editor: Editor, rng: Range, value: string, frag: DocumentFragment): void => {
+  const doc = editor.getDoc();
+  const isWs = (ch: string | null) => ch === null || /[\s\u00a0]/.test(ch);
+  if (/^ /.test(value) && !/^\s*$/.test(value)) {
+    const first = frag.firstChild;
+    if (!(NodeType.isText(first) && /^[\s\u00a0]/.test(first.data))) {
+      frag.insertBefore(doc.createTextNode(isWs(charAround(editor, rng, true)) ? '\u00a0' : ' '), frag.firstChild);
+    }
+  }
+  if (/ $/.test(value) && !/^\s*$/.test(value)) {
+    const last = frag.lastChild;
+    if (!(NodeType.isText(last) && /[\s\u00a0]$/.test(last.data))) {
+      frag.appendChild(doc.createTextNode(isWs(charAround(editor, rng, false)) ? '\u00a0' : ' '));
+    }
+  }
+};
+
 export const insertHtmlAtCaret = (editor: Editor, value: string, details: InsertContentDetails): void => {
   const dom = editor.dom;
   const selection = editor.selection;
@@ -128,6 +196,7 @@ export const insertHtmlAtCaret = (editor: Editor, value: string, details: Insert
   if (!frag.firstChild) {
     return;
   }
+  restoreEdgeSpaces(editor, rng, value, frag);
 
   // Lists pasted into lists merge their items.
   if (isListFragment(frag)) {

@@ -8,6 +8,7 @@ import { createNotificationManagerImpl } from './components/Notifications';
 import { createWindowManagerImpl } from './components/Dialog';
 import { closeAllPopups } from './components/Popup';
 import { setupContextToolbars } from './ContextToolbar';
+import { setupAutocompleter } from './Autocompleter';
 import { setupContextMenu } from './ContextMenu';
 import { registerThemeOptions } from './ThemeOptions';
 import { registerCoreButtons } from './CoreButtons';
@@ -69,6 +70,7 @@ export const createTheme = (editor: Editor): Theme => {
   let menubar: MenubarHandle | null = null;
   let statusbar: StatusBarHandle | null = null;
   let contextToolbars: { destroy: () => void } | null = null;
+  let autocompleter: { destroy: () => void } | null = null;
   let enabled = true;
 
   const renderUI = () => {
@@ -163,6 +165,7 @@ export const createTheme = (editor: Editor): Theme => {
 
   const setupBehaviours = (root: HTMLElement) => {
     contextToolbars = setupContextToolbars(editor, root);
+    autocompleter = setupAutocompleter(editor, root);
     setupContextMenu(editor, root);
 
     editor.on('init', () => {
@@ -250,6 +253,7 @@ export const createTheme = (editor: Editor): Theme => {
       menubar?.destroy();
       statusbar?.destroy();
       contextToolbars?.destroy();
+      autocompleter?.destroy();
       closeAllPopups();
     },
   };

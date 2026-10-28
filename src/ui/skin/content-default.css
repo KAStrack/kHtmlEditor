@@ -342,3 +342,38 @@ pre[class*='language-'] {
   border-radius: 4px;
   padding: 1em;
 }
+
+/* Visual chars */
+.mce-content-body .mce-nbsp,
+.mce-content-body .mce-shy {
+  background: #aaa;
+}
+.mce-content-body .mce-shy::after {
+  content: '-';
+}
+/* Non-breaking space wrapper */
+.mce-content-body .mce-nbsp-wrap {
+  display: inline;
+}
+/* Page break placeholder */
+.mce-content-body img.mce-pagebreak {
+  border: 1px dashed #aaa;
+  cursor: default;
+  display: block;
+  height: 5px;
+  margin-top: 15px;
+  page-break-before: always;
+  width: 100%;
+  background: transparent repeating-linear-gradient(90deg, #aaa 0 6px, transparent 6px 12px) center / 100% 1px no-repeat;
+}
+/* Code samples */
+.mce-content-body pre[class*='language-'] {
+  background: #f5f2f0;
+  border-radius: 4px;
+  padding: 1em;
+  overflow: auto;
+  white-space: pre;
+}
+.mce-content-body pre[class*='language-'][data-mce-selected] {
+  outline: 3px solid #b4d7ff;
+}
