@@ -306,7 +306,7 @@ const registerStyles = (editor: Editor): void => {
     return prepare(DEFAULT_STYLE_FORMATS);
   };
   let formats = getStyleFormats();
-  editor.on('init', () => {
+  editor.on('init StyleFormatsChanged', () => {
     formats = getStyleFormats();
   });
   const flatten = (items: StyleFormatItem[]): StyleFormatItem[] => items.flatMap((i) => (i.items ? flatten(i.items) : [i]));

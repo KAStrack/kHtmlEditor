@@ -287,13 +287,20 @@ const init = (editor: Editor): void => {
       return;
     }
     editor.dispatch('SkinLoaded');
+    // content_style and plugin styles are in place before PreInit/init (TinyMCE order).
+    const css = [contentStyle, ...editor.contentStyles].filter((c) => !!c).join('\n');
+    if (css) {
+      const styleElm = doc.createElement('style');
+      styleElm.id = 'mceDefaultStyles';
+      styleElm.type = 'text/css';
+      styleElm.appendChild(doc.createTextNode(css));
+      if (doc.head.firstChild) {
+        doc.head.insertBefore(styleElm, doc.head.firstChild);
+      } else {
+        doc.head.appendChild(styleElm);
+      }
+    }
     initContentBody(editor);
-    if (contentStyle) {
-      editor.dom.addStyle(contentStyle);
-    }
-    for (const s of editor.contentStyles) {
-      editor.dom.addStyle(s);
-    }
   });
 };
 

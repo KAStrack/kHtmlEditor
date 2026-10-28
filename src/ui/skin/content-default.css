@@ -377,3 +377,17 @@ pre[class*='language-'] {
 .mce-content-body pre[class*='language-'][data-mce-selected] {
   outline: 3px solid #b4d7ff;
 }
+
+/* Search and replace markers */
+.mce-content-body .mce-match-marker {
+  background: #aaa;
+  color: #000;
+}
+.mce-content-body .mce-match-marker-selected {
+  background: #39f;
+  color: #fff;
+}
+.mce-content-body .mce-match-marker-selected::selection {
+  background: #39f;
+  color: #fff;
+}

@@ -1379,3 +1379,12 @@
   font-size: 18px;
   line-height: 1;
 }
+
+/* Fullscreen plugin */
+html.khe-fullscreen-root,
+body.khe-fullscreen-root {
+  overflow: hidden !important;
+}
+.khe-container.khe-fullscreen .khe-edit-area iframe {
+  height: 100%;
+}

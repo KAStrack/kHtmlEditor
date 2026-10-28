@@ -250,6 +250,7 @@ export const createUndoManager = (editor: Editor): UndoManager => {
       editor.nodeChanged();
     }
   });
+  let firstTypedCharacter = false;
   editor.on('keydown', (e) => {
     const keyCode = e.keyCode;
     if (e.isDefaultPrevented()) {
@@ -274,6 +275,7 @@ export const createUndoManager = (editor: Editor): UndoManager => {
       if (!undoManager.typing) {
         undoManager.beforeChange();
         undoManager.typing = true;
+        firstTypedCharacter = true;
         undoManager.add({ type: 'complete' } as Partial<UndoLevel>, e);
         editor.dispatch('TypingUndo');
       }
@@ -285,6 +287,7 @@ export const createUndoManager = (editor: Editor): UndoManager => {
     if (!undoManager.typing) {
       undoManager.beforeChange();
       undoManager.typing = true;
+      firstTypedCharacter = true;
       editor.dispatch('TypingUndo');
     }
   });
@@ -298,7 +301,16 @@ export const createUndoManager = (editor: Editor): UndoManager => {
     }
     if (!undoManager.typing && !editor.composing && inputType && /^(insertText|insertReplacementText|insertCompositionText)$/.test(inputType)) {
       undoManager.typing = true;
+      firstTypedCharacter = true;
       editor.dispatch('TypingUndo');
+    }
+    // The first typed character makes the editor dirty straight away (TinyMCE keyup behaviour).
+    if (undoManager.typing && firstTypedCharacter && !editor.composing) {
+      firstTypedCharacter = false;
+      if (!editor.isDirty()) {
+        editor.setDirty(true);
+      }
+      editor.nodeChanged();
     }
   });
   editor.on('AddUndo Undo Redo ClearUndos', (e) => {
