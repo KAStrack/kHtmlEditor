@@ -51,9 +51,9 @@ test.describe('lists plugin', () => {
     await setContent(page, '<ul><li>a</li><li>b</li><li>c</li></ul>');
     await setCaret(page, 'li:nth-child(2)', 1);
     await exec(page, 'Indent');
-    expect(await getContent(page)).toBe('<ul>\n<li>a<ul>\n<li>b</li>\n</ul></li>\n<li>c</li>\n</ul>');
+    expect(await getContent(page)).toBe('<ul>\n<li>a\n<ul>\n<li>b</li>\n</ul>\n</li>\n<li>c</li>\n</ul>');
     await page.keyboard.press('Tab');
-    expect(await getContent(page)).toBe('<ul>\n<li>a<ul>\n<li>b</li>\n</ul></li>\n<li>c</li>\n</ul>');
+    expect(await getContent(page)).toBe('<ul>\n<li>a\n<ul>\n<li>b</li>\n</ul>\n</li>\n<li>c</li>\n</ul>');
     await page.keyboard.press('Shift+Tab');
     expect(await getContent(page)).toBe('<ul>\n<li>a</li>\n<li>b</li>\n<li>c</li>\n</ul>');
   });
@@ -66,10 +66,10 @@ test.describe('lists plugin', () => {
   });
 
   test('removing a nested item keeps siblings nested', async ({ page }) => {
-    await setContent(page, '<ul><li>a<ul><li>b</li><li>c</li></ul></li></ul>');
+    await setContent(page, '<ul><li>a<ul><li>b</li><li>c</li></ul>\n</li></ul>');
     await setCaret(page, 'li li', 1);
     await exec(page, 'Outdent');
-    expect(await getContent(page)).toBe('<ul>\n<li>a</li>\n<li>b<ul>\n<li>c</li>\n</ul></li>\n</ul>');
+    expect(await getContent(page)).toBe('<ul>\n<li>a</li>\n<li>b\n<ul>\n<li>c</li>\n</ul>\n</li>\n</ul>');
   });
 
   test('list buttons reflect state and advlist styles apply', async ({ page }) => {

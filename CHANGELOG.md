@@ -23,7 +23,7 @@ versioning.
 - Internal marker attributes use TinyMCE's `data-mce-*` names and the content body carries the
   `mce-content-body` class so existing content CSS and plugin code keep matching (the plan said `data-k-*`).
 - The shim reports `majorVersion` `'7'` (the API emulated); the real version is `kHtmlEditor.version`.
-- Nested list output follows TinyMCE's writer rules (`ul`/`ol` are not in `indent_before`): `<li>a<ul>\n<li>b</li>\n</ul></li>`.
+- Output indentation uses TinyMCE's exact `indent_before`/`indent_after` element lists (including `ul`, `ol`, `li`, `dl`, `details`), so nested lists serialise as `<li>a\n<ul>\n<li>b</li>\n</ul>\n</li>`.
 - `textarea`, `select` and `button` count as non-empty elements so a block containing only a form control is not padded away.
 
 ### Known issues

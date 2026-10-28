@@ -345,7 +345,7 @@ export class EditorSelection {
         // Serialise with contextual wrapping of ancestors when requested.
         let node: Node = container;
         if (args.contextual) {
-          const parents = this.dom.getParents(rng.commonAncestorContainer, (n) => NodeType.isElement(n) && !this.dom.isBlock(n), this.getRootNode()) as Element[];
+          const parents = this.dom.getParents(rng.commonAncestorContainer, (n) => NodeType.isElement(n) && (!this.dom.isBlock(n) || /^H[1-6]$/.test(n.nodeName)), this.getRootNode()) as Element[];
           let wrapper: Element | null = null;
           for (const p of parents) {
             const clone = p.cloneNode(false) as Element;

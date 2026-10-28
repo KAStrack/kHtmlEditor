@@ -17,6 +17,7 @@ import { createBlobCache } from '../content/BlobCache';
 import { registerCoreCommands } from '../commands/Commands';
 import { registerFormatCommands } from '../commands/FormatCommands';
 import { setupControlSelection } from '../selection/ControlSelection';
+import { setupPaste } from '../content/Paste';
 import { setupKeyboard } from '../keyboard/index';
 import { isFunction, isString } from '../util/Type';
 
@@ -340,6 +341,7 @@ const initContentBody = (editor: Editor): void => {
   registerFormatCommands(editor);
   setupKeyboard(editor);
   setupControlSelection(editor);
+  setupPaste(editor);
 
   body.contentEditable = String(editor.hasEditableRoot() && !editor.readonly);
   if (!Options.shouldBrowserSpellcheck(editor)) {

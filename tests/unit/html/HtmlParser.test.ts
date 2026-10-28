@@ -37,7 +37,7 @@ const cases: Array<[string, string, string?]> = [
   ['comments kept', '<p>a</p><!-- c --><p>b</p>', '<p>a</p>\n<!-- c -->\n<p>b</p>'],
   ['table gets tbody', '<table><tr><td>a</td></tr></table>', '<table>\n<tbody>\n<tr>\n<td>a</td>\n</tr>\n</tbody>\n</table>'],
   ['empty cell padded', '<table><tbody><tr><td></td></tr></tbody></table>', '<table>\n<tbody>\n<tr>\n<td>&nbsp;</td>\n</tr>\n</tbody>\n</table>'],
-  ['lists', '<ul><li>a</li><li>b<ul><li>c</li></ul></li></ul>', '<ul>\n<li>a</li>\n<li>b<ul>\n<li>c</li>\n</ul></li>\n</ul>'],
+  ['lists', '<ul><li>a</li><li>b<ul><li>c</li></ul></li></ul>', '<ul>\n<li>a</li>\n<li>b\n<ul>\n<li>c</li>\n</ul>\n</li>\n</ul>'],
   ['text in list wrapped in li', '<ul>text</ul>', '<ul>\n<li>text</li>\n</ul>'],
   ['loose li wrapped', '<li>a</li>', '<ul>\n<li>a</li>\n</ul>'],
   ['paragraph inside li allowed in html5', '<ul><li><p>a</p><p>b</p></li></ul>', '<ul>\n<li>\n<p>a</p>\n<p>b</p>\n</li>\n</ul>'],

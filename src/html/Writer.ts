@@ -23,7 +23,7 @@ export interface Writer {
 }
 
 export const DEFAULT_INDENT_ELEMENTS =
-  'p h1 h2 h3 h4 h5 h6 blockquote div title style pre script td th li area table thead tfoot tbody tr section summary article hgroup aside header footer nav figure figcaption option optgroup datalist';
+  'p h1 h2 h3 h4 h5 h6 blockquote div title style pre script td th ul ol li dl dt dd area table thead tfoot tbody tr section details summary article hgroup aside figure figcaption option optgroup datalist';
 
 /** Streaming HTML writer – port of TinyMCE's Writer so output formatting (newlines, xhtml) matches. */
 export const createWriter = (settings: WriterSettings = {}): Writer => {

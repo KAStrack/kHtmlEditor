@@ -191,7 +191,7 @@ export const createDomSerializer = (editor: Editor): DomSerializer => {
     }
     stripInternals(container);
     editor.dispatch('PreProcess', { ...args, node: container });
-    parser.filter(container, { ...args, get: true, format: args.format ?? 'html', context: undefined });
+    parser.filter(container, { ...args, get: true, format: args.format ?? 'html', context: undefined, ...(args.selection ? { forced_root_block: false } : {}) });
     return container;
   };
 
