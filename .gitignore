@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.vitest/
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.tsbuildinfo

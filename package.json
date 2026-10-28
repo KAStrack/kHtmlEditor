@@ -1,0 +1,62 @@
+{
+  "name": "khtmleditor",
+  "version": "0.1.0",
+  "description": "kHtmlEditor — a from-scratch, dependency-free rich text HTML editor that is a drop-in replacement for TinyMCE.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/khtmleditor.esm.js",
+  "module": "dist/khtmleditor.esm.js",
+  "browser": "dist/khtmleditor.min.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/khtmleditor.esm.js",
+      "default": "./dist/khtmleditor.min.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "./dist/khtmleditor.js",
+    "./dist/khtmleditor.min.js",
+    "./dist/khtmleditor.tinymce-shim.js"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:types": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:xss": "vitest run tests/unit/xss",
+    "e2e": "playwright test",
+    "sync-docs": "node scripts/sync-docs.mjs",
+    "release:check": "npm run typecheck && npm run build && npm run build:types && npm test && npm run sync-docs"
+  },
+  "keywords": [
+    "wysiwyg",
+    "html-editor",
+    "rich-text",
+    "contenteditable",
+    "tinymce",
+    "editor"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "npm@11.21.1+sha256.dd77c48eb845f4856c2cdba347cfb52bd877a2655a1ea48ff0c4796e3df9dd7b",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "esbuild": "^0.28.2",
+    "jsdom": "^29.1.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
