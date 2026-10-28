@@ -40,7 +40,9 @@ export const setupObjectSelection = (editor: Editor): void => {
     if (!target || !editor.getBody().contains(target)) {
       return;
     }
-    const cef = dom.getParent(target, (n) => NodeType.isContentEditableFalse(n), editor.getBody()) as HTMLElement | null;
+    // The closest explicit contenteditable state wins: a click inside an editable caption of a
+    // non-editable figure must not select the figure.
+    const cef = closestNonEditable(target, editor.getBody());
     if (cef) {
       target = cef;
     }
@@ -166,6 +168,23 @@ export const setupObjectSelection = (editor: Editor): void => {
       }
     });
   });
+};
+
+const closestNonEditable = (node: Node, root: HTMLElement): HTMLElement | null => {
+  let n: Node | null = node;
+  while (n && n !== root) {
+    if (NodeType.isElement(n)) {
+      const state = n.getAttribute('contenteditable');
+      if (state === 'true') {
+        return null;
+      }
+      if (state === 'false') {
+        return n as HTMLElement;
+      }
+    }
+    n = n.parentNode;
+  }
+  return null;
 };
 
 const insertCaretBlock = (editor: Editor, ref: HTMLElement, before: boolean): void => {

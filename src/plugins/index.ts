@@ -2,3 +2,4 @@
 import './lists/Plugin';
 import './advlist/Plugin';
 import './table/Plugin';
+import './image/Plugin';
