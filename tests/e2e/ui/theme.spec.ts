@@ -43,6 +43,31 @@ test.describe('theme UI', () => {
     expect(await getContent(page)).toBe('<p style="text-align: right;"><strong>hello</strong> world</p>');
   });
 
+  test('fontfamily names the matching format, the system stack and default_font_stack', async ({ page }) => {
+    await initEditor(page, { toolbar: 'fontfamily', menubar: false });
+    const fonts = page.locator('#editor_parent [data-khe-name="fontfamily"]');
+    // The default content font is the platform stack.
+    await setContent(page, '<p>plain</p>');
+    await setCaret(page, 'p', 1);
+    await expect(fonts).toContainText('System Font');
+    // A stack whose first family matches a format shows that format, checked in the menu.
+    await setContent(page, '<p><span style="font-family: georgia, serif;">serif</span></p>');
+    await setCaret(page, 'span', 1);
+    await expect(fonts).toContainText('Georgia');
+    await fonts.click();
+    await expect(page.locator('.khe-popup .khe-menu__item[aria-checked="true"]')).toHaveText('Georgia');
+    await page.keyboard.press('Escape');
+    // Unknown families show their first name; default_font_stack adds a custom system stack.
+    await setContent(page, '<p><span style="font-family: \'Brand Sans\', Inter, sans-serif;">brand</span></p>');
+    await setCaret(page, 'span', 1);
+    await expect(fonts).toContainText('Brand Sans');
+    await page.evaluate(() => (window as any).kHtmlEditor.remove());
+    await initEditor(page, { toolbar: 'fontfamily', menubar: false, default_font_stack: ['Brand Sans', 'Inter'] });
+    await setContent(page, '<p><span style="font-family: \'Brand Sans\', Inter, sans-serif;">brand</span></p>');
+    await setCaret(page, 'span', 1);
+    await expect(fonts).toContainText('System Font');
+  });
+
   test('blocks dropdown shows current block and changes it', async ({ page }) => {
     await initEditor(page, { toolbar: 'blocks', menubar: false });
     await setContent(page, '<h2>Title</h2>');

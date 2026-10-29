@@ -45,6 +45,7 @@ export const registerThemeOptions = (editor: Editor): void => {
     default:
       'Andale Mono=andale mono,monospace;Arial=arial,helvetica,sans-serif;Arial Black=arial black,sans-serif;Book Antiqua=book antiqua,palatino,serif;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,palatino,serif;Helvetica=helvetica,arial,sans-serif;Impact=impact,sans-serif;Symbol=symbol;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco,monospace;Times New Roman=times new roman,times,serif;Trebuchet MS=trebuchet ms,geneva,sans-serif;Verdana=verdana,geneva,sans-serif;Webdings=webdings;Wingdings=wingdings,zapf dingbats',
   });
+  register('default_font_stack', { processor: 'string[]', default: [] });
   register('font_size_formats', { processor: 'string', default: '8pt 10pt 12pt 14pt 18pt 24pt 36pt' });
   register('font_size_input_default_unit', { processor: 'string', default: 'pt' });
   register('line_height_formats', { processor: 'string', default: '1 1.1 1.2 1.3 1.4 1.5 2' });

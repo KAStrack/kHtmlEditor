@@ -362,25 +362,47 @@ const registerStyles = (editor: Editor): void => {
   editor.ui.registry.addMenuButton('styleselect', editor.ui.registry.getAll().buttons.styles as any);
 };
 
+// TinyMCE labels the platform font stack (and any stack containing every font of
+// `default_font_stack`) "System Font" instead of naming its first family.
+const systemStackFonts = ['-apple-system', 'segoe ui', 'roboto', 'helvetica neue', 'sans-serif'];
+const splitFonts = (s: string): string[] => s.split(/\s*,\s*/).map((f) => f.replace(/^['"]+|['"]+$/g, '').toLowerCase());
+const matchesStack = (fonts: string[], stack: string[]): boolean => stack.length > 0 && stack.every((f) => fonts.includes(f.toLowerCase()));
+const isSystemFontStack = (value: string, userStack: string[]): boolean => {
+  if (value.toLowerCase().indexOf('-apple-system') !== 0 && userStack.length === 0) {
+    return false;
+  }
+  const fonts = splitFonts(value);
+  return matchesStack(fonts, systemStackFonts) || matchesStack(fonts, userStack);
+};
+
 const registerFonts = (editor: Editor): void => {
   const fonts = () => parseKeyValueList(editor.options.get('font_family_formats') as string, ';');
   const normalize = (s: string) => s.replace(/['"]/g, '').replace(/,\s+/g, ',').toLowerCase();
+  // A format matches on its whole stack or, like TinyMCE, on its first family alone.
+  const currentMatch = (value: string) => {
+    const n = normalize(value);
+    const first = splitFonts(value)[0];
+    return fonts().find((f) => normalize(f.value) === n || normalize(f.title) === n || splitFonts(f.value)[0] === first);
+  };
   const currentFont = (): string => {
     const value = editor.queryCommandValue('FontName');
-    const n = normalize(value);
-    const match = fonts().find((f) => normalize(f.value) === n || normalize(f.title) === n);
+    if (!value) {
+      return editor.translate('Fonts');
+    }
+    const match = currentMatch(value);
     if (match) {
       return editor.translate(match.title);
     }
-    if (!value) {
-      return editor.translate('Fonts');
+    if (isSystemFontStack(value, editor.options.get('default_font_stack') as string[])) {
+      return editor.translate('System Font');
     }
     // Show the first family of a stack.
     return value.split(',')[0].replace(/['"]/g, '').trim() || editor.translate('Fonts');
   };
   const fontItems = (): MenuItemAnySpec[] => {
-    const current = normalize(editor.queryCommandValue('FontName'));
-    return fonts().map((f) => ({ type: 'togglemenuitem', text: f.title, active: normalize(f.value) === current, meta: { style: `font-family: ${f.value}` }, onAction: () => editor.execCommand('FontName', false, f.value) }) as MenuItemAnySpec);
+    const value = editor.queryCommandValue('FontName');
+    const match = value ? currentMatch(value) : undefined;
+    return fonts().map((f) => ({ type: 'togglemenuitem', text: f.title, active: !!match && f.title === match.title && f.value === match.value, meta: { style: `font-family: ${f.value}` }, onAction: () => editor.execCommand('FontName', false, f.value) }) as MenuItemAnySpec);
   };
   editor.ui.registry.addMenuButton('fontfamily', {
     text: 'Fonts',
