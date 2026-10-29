@@ -6,7 +6,16 @@ versioning.
 
 ## [Unreleased]
 
-(nothing yet)
+### Added
+- `default_font_stack` option. The `fontfamily` button labels the system font stack (or a stack
+  containing every font of `default_font_stack`) "System Font", and matches `font_family_formats`
+  entries on their first family, as TinyMCE does. Previously it showed `-apple-system`.
+
+### Fixed
+- The demo page was wider than a phone screen: its single-column layout could not shrink below
+  the editor and output box.
+- The install instructions pointed at npm and GitHub releases, neither of which exists yet. They
+  now give the jsDelivr URL for a release tag, the committed `docs/dist/` file, and build steps.
 
 ## [0.1.0] - 2026-10-28
 

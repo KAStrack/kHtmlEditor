@@ -23,7 +23,7 @@ Documentation, demo and examples: **https://kastrack.github.io/kHtmlEditor/**
 
 ```html
 <textarea id="editor"><p>Hello world</p></textarea>
-<script src="dist/khtmleditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/KAStrack/kHtmlEditor@v0.1.0/docs/dist/khtmleditor.min.js"></script>
 <script>
   kHtmlEditor.init({
     selector: '#editor',
@@ -36,12 +36,14 @@ Documentation, demo and examples: **https://kastrack.github.io/kHtmlEditor/**
 Migrating from TinyMCE with zero code changes:
 
 ```html
-<script src="dist/khtmleditor.min.js"></script>
-<script src="dist/khtmleditor.tinymce-shim.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/KAStrack/kHtmlEditor@v0.1.0/docs/dist/khtmleditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/KAStrack/kHtmlEditor@v0.1.0/docs/dist/khtmleditor.tinymce-shim.js"></script>
 <!-- your existing tinymce.init({...}) keeps working -->
 ```
 
-With npm: `npm install khtmleditor`, then `import kHtmlEditor from 'khtmleditor'`.
+The script is also in the repository at `docs/dist/khtmleditor.min.js` if you would rather serve it
+yourself. kHtmlEditor is not on npm yet; to get the ES module build and TypeScript declarations,
+build from source (see Development).
 
 ## Plugins
 

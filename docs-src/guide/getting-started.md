@@ -8,20 +8,31 @@ description: Install kHtmlEditor, initialise it on a textarea and read the conte
 
 ## Install
 
-Download `khtmleditor.min.js` from the [GitHub releases](https://github.com/KAStrack/kHtmlEditor/releases) (or copy `dist/` from the repository) and include it on your page. There is nothing else to load: the UI skin, the content stylesheet and every plugin are bundled.
+kHtmlEditor is one script. There is nothing else to load: the UI skin, the content stylesheet and every plugin are bundled. Load it from the jsDelivr CDN, pinned to a release tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/KAStrack/kHtmlEditor@v0.1.0/docs/dist/khtmleditor.min.js"></script>
+```
+
+or download [`docs/dist/khtmleditor.min.js`](https://github.com/KAStrack/kHtmlEditor/blob/main/docs/dist/khtmleditor.min.js) from the repository and serve it yourself:
 
 ```html
 <script src="/js/khtmleditor.min.js"></script>
 ```
 
-With npm:
+The TinyMCE shim, `khtmleditor.tinymce-shim.js`, sits in the same folder.
+
+### Building from source
+
+kHtmlEditor is not published to npm yet. For the ES module build and the TypeScript declarations, build it from a clone of the repository (Node 22):
 
 ```bash
-npm install khtmleditor
+npm install
+npm run build && npm run build:types   # dist/khtmleditor.min.js, dist/khtmleditor.esm.js, dist/types/
 ```
 
 ```js
-import kHtmlEditor from 'khtmleditor';
+import kHtmlEditor from './dist/khtmleditor.esm.js';
 ```
 
 ## Initialise
